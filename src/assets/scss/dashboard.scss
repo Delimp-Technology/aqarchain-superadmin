@@ -1,0 +1,138 @@
+/******************************
+ *  DASHBOARD THEME  *
+ ******************************/
+
+// REQUIRED IMPORTS
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
+@import "../../node_modules/bootstrap/scss/mixins";
+
+// SETTING OVERRIDES
+@import "theme_includes/0_theme_settings";
+
+// DASHBOARD
+.dashboard-nav-tabs
+{
+    border: none;
+
+    .nav-item
+    {
+        .nav-link
+        {
+            position: relative;
+            color: #1E282E;
+            font-weight: 700;
+            border: none;
+            padding: 16px 24px 16px 36px;
+
+            &:after
+            {
+                position: absolute;
+                display: none;
+                content: " ";
+                background-image: linear-gradient(to right, #FBB040 0%, #FFDE17 100%);
+                border-top-right-radius: 10px;
+                border-bottom-right-radius: 10px;
+                width: 14px;
+                top: 4px;
+                left: 0;
+                bottom: 4px;
+            }
+
+            &.active
+            {
+                background-color: transparent;
+
+                &:after
+                {
+                    display: block;
+                }
+            }
+        }
+    }
+}
+
+.dashboard-table-container
+{
+    background-color: #F0F2F7;
+    padding: 24px 16px;
+    width: 100%;
+    min-height: 500px;
+
+    table.dashboard-table
+    {
+        width: 100%;
+        border-collapse: inherit;
+        border-spacing: 2px 12px;
+
+        thead,
+        tfoot
+        {
+            background-color: rgba(#1E282E, 0.4);
+            color: $white;
+
+            th
+            {
+                padding: 16px;
+                text-align: center;
+                font-size: 18px;
+                
+                &:first-child
+                {
+                    border-top-left-radius: 10px;
+                    border-bottom-left-radius: 10px;
+                    overflow: hidden;
+                }
+
+                &:last-child
+                {
+                    border-top-right-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                    overflow: hidden;
+                }
+
+                @include media-breakpoint-up(lg)
+                {
+                    padding: 24px;
+                }
+            }
+        }
+
+        tbody
+        {
+            tr
+            {
+                background-color: $white;
+                border-radius: 10px;
+                margin-top: 8px;
+                box-shadow: -1px 1.7px 4.25px rgba($black, 0.15);
+            }
+
+            td
+            {
+                padding: 13px;
+                text-align: center;
+                font-weight: 700;
+                
+                &:first-child
+                {
+                    border-top-left-radius: 10px;
+                    border-bottom-left-radius: 10px;
+                    overflow: hidden;
+                }
+
+                &:last-child
+                {
+                    border-top-right-radius: 10px;
+                    border-bottom-right-radius: 10px;
+                    overflow: hidden;
+                }
+            }
+        }
+    }
+}
+
+.dashboard-table-pagination
+{
+    display: inline-block;
+}

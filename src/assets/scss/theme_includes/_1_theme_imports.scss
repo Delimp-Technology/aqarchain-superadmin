@@ -1,0 +1,75 @@
+/*********************
+IMPORT OWL CAROUSEL - START
+*********************/
+@import '../../../node_modules/owl.carousel/src/scss/owl.carousel.scss';
+@import '../../../node_modules/owl.carousel/src/scss/owl.theme.default.scss';
+
+.owl-carousel
+{
+	.owl-item
+	{
+		img
+		{
+			display: inline-block;
+			width: auto!important;
+		}
+	}
+}
+
+.owl-theme
+{
+	.owl-dots 
+	{
+        text-align: inherit;
+        
+		.owl-dot
+		{
+            outline: none;
+
+			span
+			{
+				height: 11px;
+				width: 11px;
+				background-color: rgba(#293138, 0.4);
+				border: none;
+				border-radius: 11px;
+				margin: 3px;
+				margin-bottom: 24px;
+				transition: 0.3s all;
+			}
+
+			&.active,
+			&:hover
+			{
+				span
+				{
+					background-color: #293138;
+				}
+            }
+            
+            &.active
+            {
+                span
+                {
+                    width: 44px;
+                }
+            }
+
+			&:not(:last-child)
+            {
+                margin-right: rem-calc(9);
+            }
+		}
+	}
+	
+	&.owl-dots-centered
+	{
+		.owl-dots
+		{
+			text-align: center;
+		}
+	}
+}
+/*********************
+IMPORT OWL CAROUSEL - END
+*********************/

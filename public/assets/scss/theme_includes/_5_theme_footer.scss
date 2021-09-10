@@ -1,0 +1,240 @@
+footer.footer
+{
+    #footer-form-container
+    {
+        margin: 60px auto;
+        
+        >.row
+        {
+            border: 2px solid rgba(#374047, 0.1);
+        }
+
+        #footer-form
+        {
+            padding: 30px;
+            border-right: 2px solid rgba(#374047, 0.1);
+
+            @include media-breakpoint-down(md){
+                border-right: none;
+            }
+
+            input,
+            textarea
+            {
+                font-size: 14px;
+                border-top-width: 0;
+                border-left-width: 0;
+                border-right-width: 0;
+                border-radius: 0;
+                padding: 12px 18px;
+                height: auto;
+
+                &:focus
+                {
+                    border-bottom-width: 2px;
+                }
+            }
+
+            @include media-breakpoint-up(lg) 
+            {
+                padding: 60px;
+            }
+        }
+
+        .social-icons
+        {
+            flex-direction: row;
+
+            .social-icon
+            {
+                text-align: center;
+                display: inline-block;
+
+                img
+                {
+                    width: 28px;
+                    height: 28px;
+                }
+
+                &:not(:last-child)
+                {
+                    border-right: 2px solid rgba(#374047, 0.1);
+
+                    @include media-breakpoint-down(md){
+                        border-right: none;
+                    }
+                }
+                
+
+                @include media-breakpoint-up(lg)
+                {
+                    padding: 35px;
+
+                    &:not(:last-child)
+                    {
+                        border-bottom: 2px solid rgba(#374047, 0.1);
+                        border-right: 0;
+                    }
+                }
+
+                @include media-breakpoint-down(md){
+                    padding: 20px;
+                }
+
+            }
+            
+            @include media-breakpoint-up(lg)
+            {
+                flex-direction: column;
+            }
+        }
+
+        @include media-breakpoint-up(lg) 
+        {
+            margin: 120px auto;
+        }
+    }
+}
+
+//FOOTER STYLES CONTINUED
+
+ .footer-bg
+{
+    background-image: url("/public/images/footer-bg.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    // background-color: #1f282f;
+}
+  
+.yellow-border-right:after
+{
+    border-right: 0.140rem solid #FFCB18;
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 15%;
+    height: 70%; 
+
+    @include media-breakpoint-down(md) {   
+
+        display: none;
+    }
+}
+  
+.white-border-right:after
+{
+    border-right: 0.140rem solid white;
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 15%;
+    height: 70%; 
+
+    @include media-breakpoint-down(md) {   
+
+        display: none;
+    }
+}
+
+.footer-link-section
+{ 
+    padding: 20px; 
+}
+  
+.footer-logo-bg
+{
+    background-image: url("/public/images/footer-logo-bg.png");
+    background-size: 100% auto;
+}
+
+.footer-link.nav-link
+{
+    color: #b9b9b9;
+    padding: 0px;
+    padding-bottom: 10px;
+}
+
+.footer-image
+{
+  width:auto;
+  height:40px;
+}
+  
+ .copyright-text
+{
+  margin-top: 20px;
+  font-size: 14px;
+}
+  
+// LANDING PAGE FOOTER 
+
+.landing-page-footer
+{
+    background: url("/public/images/landing-page-footer-bg.png");
+    background-size: 100% 100%;
+    padding: 1.7rem;
+
+    .website-description, .copyright-text 
+    {
+        color: #b9b9b9;
+    }
+
+    .newsletter-email 
+    {
+        background-color: #6A6975;
+
+        > * {
+            color:#C9D2D8;
+        }
+
+        .form-control {
+            border: none;
+        }
+
+        .input-group-append {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+        }
+
+        .fa-envelope 
+        {
+            color: #4E4D5A;
+            font-size: 26px;
+        }
+    
+        ::placeholder {
+            color: #C9D2D8 !important;
+        }
+    }
+
+    .social-nav {
+
+        a 
+        {
+            background-color: #6A6975;
+            padding: 14px 18px;
+            border-radius: 50px;
+
+            > * 
+            {
+                font-size: 15px;
+                color: white;
+            }
+
+            .fa-facebook-f {
+                font-size: 20px;
+            }
+
+            &:hover {
+                background-color: white;
+
+                > * 
+                {
+                    color: #6A6975;
+                }
+
+            }
+        }
+    }
+}

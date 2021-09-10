@@ -1,0 +1,123 @@
+/******************************
+ *  SUPER ADMIN THEME  *
+ ******************************/
+
+// REQUIRED IMPORTS
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
+@import "../../node_modules/bootstrap/scss/mixins";
+
+// SETTING OVERRIDES
+@import "theme_includes/0_theme_settings";
+
+// SUPER ADMIN
+body
+{
+    @include media-breakpoint-down(md)
+    {
+        &.has-overlay
+        {
+            position: relative;
+            overflow-y: hidden;
+
+            .overlay
+            {
+                position: absolute;
+                content: " ";
+                top: 0;
+                bottom: 0;
+                right: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: rgba($secondary, 0.1);
+                z-index: 1;
+            }
+        }
+    }
+}
+
+.wrapper 
+{
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    z-index: 1;
+
+    #sidebar 
+    {
+        min-width: 320px;
+        max-width: 320px;
+        min-height: 100vh;
+        box-shadow: 5px 5px 30px rgba($black, 0.15);
+        transition: 0.3s transform;
+        background-color: $white;
+
+        position: relative;
+        z-index: 2;
+        
+        .navbar-brand
+        {
+            padding-top: 30px;
+            padding-bottom: 30px;
+            background-color: #FAFAFA;
+        }
+
+        @include media-breakpoint-down(md)
+        {
+            margin-top: -160px;
+            transform: translateX(-320px);
+            box-shadow: none;
+            min-height: calc(100vh + 160px);
+
+            &.active
+            {
+                transform: translateX(0);
+                box-shadow: 5px 5px 30px rgba($black, 0.15);
+                background-color: $white;
+            }
+        }
+    }
+
+    #content
+    {
+        @include media-breakpoint-down(md)
+        {
+            width: 100%;
+            position: absolute;
+        }
+
+        .navbar
+        {
+            height: 190px;
+            align-items: center;
+        }
+
+        #spacer
+        {
+            height: 48px;
+            background-color: #FEC63D;
+
+            @include media-breakpoint-up(lg)
+            {
+                height: 75px;
+            }
+        }
+
+        .superadmin-cards
+        {
+            .superadmin-card
+            {
+                border-radius: 10px;
+                
+                .superadmin-card-header
+                {
+                    min-height: 68px;
+                    border-bottom: 2px solid rgba(#374047, 0.1);
+                    border-top-left-radius: 10px;
+                    border-top-right-radius: 10px;
+                }
+            }
+        }
+    }
+}

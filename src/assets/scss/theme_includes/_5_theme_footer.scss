@@ -1,0 +1,207 @@
+footer.footer
+{
+    #footer-form-container
+    {
+        margin: 60px auto;
+        
+        >.row
+        {
+            border: 2px solid rgba(#374047, 0.1);
+        }
+
+        #footer-form
+        {
+            padding: 30px;
+            border-right: 2px solid rgba(#374047, 0.1);
+
+            @include media-breakpoint-down(md){
+                border-right: none;
+            }
+
+            input,
+            textarea
+            {
+                font-size: 14px;
+                border-top-width: 0;
+                border-left-width: 0;
+                border-right-width: 0;
+                border-radius: 0;
+                padding: 12px 18px;
+                height: auto;
+
+                &:focus
+                {
+                    border-bottom-width: 2px;
+                }
+            }
+
+            input[type="checkbox"]
+            {
+                display: none;
+
+                + label
+                {
+                    position: relative;
+                    padding-left: 36px;
+                    display: inline-block;
+
+                    &::after
+                    {
+                        position: absolute;
+                        left: 0;
+                        top: -5px;
+                        display: block;
+                        content: " ";
+                        background-color: transparent;
+                        border: 8px solid #000000;
+                        border-radius: 50%;
+                        height: 30px;
+                        width: 30px;
+                        transition: 0.3s all;
+                    }
+                }
+
+                &:checked
+                {
+                    + label
+                    {
+                        &::after
+                        {
+                            background-color: $primary;
+                            background-image: linear-gradient(to right, #FBB040 0%, #FFDE17 100%);
+                        }
+                    }
+                }
+            }
+
+            @include media-breakpoint-up(lg) 
+            {
+                padding: 60px;
+            }
+        }
+
+        .social-icons
+        {
+            flex-direction: row;
+
+            .social-icon
+            {
+                text-align: center;
+                display: inline-block;
+
+                img
+                {
+                    width: 28px;
+                    height: 28px;
+                }
+
+                &:not(:last-child)
+                {
+                    border-right: 2px solid rgba(#374047, 0.1);
+
+                    @include media-breakpoint-down(md){
+                        border-right: none;
+                    }
+                }
+                
+
+                @include media-breakpoint-up(lg)
+                {
+                    padding: 35px;
+
+                    &:not(:last-child)
+                    {
+                        border-bottom: 2px solid rgba(#374047, 0.1);
+                        border-right: 0;
+                    }
+                }
+
+                @include media-breakpoint-down(md){
+                    padding: 20px;
+                }
+
+            }
+            
+            @include media-breakpoint-up(lg)
+            {
+                flex-direction: column;
+            }
+        }
+
+        @include media-breakpoint-up(lg) 
+        {
+            margin: 120px auto;
+        }
+    }
+}
+
+//FOOTER STYLES CONTINUED
+
+ .footer-bg
+{
+    background-image: url("/public/images/footer-bg.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    // background-color: #1f282f;
+}
+  
+.yellow-border-right:after
+{
+    border-right: 0.140rem solid #FFCB18;
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 15%;
+    height: 70%; 
+
+    @include media-breakpoint-down(md) {   
+
+        display: none;
+    }
+}
+  
+.white-border-right:after
+{
+    border-right: 0.140rem solid white;
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 15%;
+    height: 70%; 
+
+    @include media-breakpoint-down(md) {   
+
+        display: none;
+    }
+}
+
+.footer-link-section
+{ 
+    padding: 20px; 
+}
+  
+.footer-logo-bg
+{
+    background-image: url("/public/images/footer-logo-bg.png");
+    background-size: 100% auto;
+}
+
+.footer-link.nav-link
+{
+    color: #b9b9b9;
+    padding: 0px;
+    padding-bottom: 10px;
+}
+
+.footer-image
+{
+  width:auto;
+  height:40px;
+}
+  
+ .copyright-text
+{
+  margin-top: 20px;
+  font-size: 14px;
+}
+  
