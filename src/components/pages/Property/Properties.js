@@ -1,57 +1,35 @@
 import React, {useEffect, useState} from 'react';
+import {connect} from 'react-redux';
+import {getPropertyList} from '../../../redux/actions/Properties';
+import IsLoadingHOC from '../../common/IsLoadingHOC';
 import {SearchForm} from '../../common/Search';
-import axios from 'axios';
 
-export default function Properties() {
-  const [propertylist, setpropertylist] = useState([
-    {
-      name: '',
-      contact: '',
-      email: '',
-      status: '',
-      id: '',
-    },
-  ]);
-  const [userlist, setuserlist] = useState([
-    {
-      name: '',
-      contact: '',
-      email: '',
-      status: '',
-      id: '',
-    },
-  ]);
-  const getproperties = async () => {
-    const params = {
+const Properties = props => {
+  const {getPropertyList, setLoading} = props;
+  const [propertyList, setPropertyList] = useState([]);
+
+  useEffect(() => {
+    const filterData = {
       pageNumber: 1,
       limit: 10,
     };
-    console.log(localStorage.getItem('token'), 'hum');
-    await axios
-      .post('http://47.91.115.83/api/admin/property/list', params, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+    getPropertyList(filterData)
+      .then(
+        response => {
+          setPropertyList(response.data);
+          setLoading(false);
         },
-      })
-      .then(res => {
-        console.log(res);
-        //   for(var i = 0 ;i<res.data.data.length;i++)
-        // {
-        //   console.log(res.data.data.first_name)
-        //   setpropertylist((old)=>[...old,{
-        //    name:res.data.data[i].first_name+" " +res.data.data[i].last_name,
-        //    contact:res.data.data[i].email,
-        //    email:res.data.data[i].email,
-        //    status:res.data.data[i].status?"Active":"Inactive",
-        //    id:res.data.data[i]s
-        //   }])
-
-        // }
+        error => {
+          setLoading(false);
+          console.log('error', error);
+        },
+      )
+      .catch(error => {
+        setLoading(false);
+        console.log('error', error);
       });
-  };
-  useEffect(() => {
-    getproperties();
   }, []);
+
   return (
     <div id="content" className="flex-grow-1">
       <div id="page-content" className="py-lg-5 pl-lg-5 p-md-2 p-3">
@@ -197,25 +175,37 @@ export default function Properties() {
                         </tr>
                       </thead>
                       <tbody>
-                        {/* {
-                          data.map((da,index)=>
-                          <tr>
-                          <td>{da.id}</td>
-                          <td>{da.property_type_data[0].type_title}</td>
-                          <td>{da.city}, {da.country}</td>
-                          <td>{da.listedBy}</td>
-                          <td>{da.price} {da.currency}</td>
-                          <td>{da.property_for}</td>
-                          <td>
-                            <a
-                              href=""
-                              className="btn btn-blue btn-sm btn-rounded-sm mb-0">
-                              View
-                            </a>
-                          </td>
-                        </tr>
-                          )
-                        } */}
+                        {propertyList.map((item, index) => (
+                          <tr key={index}>
+                            <td>{!item.id ? 'NA' : item.id}</td>
+                            <td>
+                              {!item.property_type_data[0].type_title
+                                ? 'NA'
+                                : item.property_type_data[0].type_title}
+                            </td>
+                            <td>
+                              {!item.city && !item.country
+                                ? 'NA'
+                                : ` ${item.city}, ${item.country}`}
+                            </td>
+                            <td>{!item.listedBy ? 'NA' : item.listedBy}</td>
+                            <td>
+                              {!item.price && !item.currency
+                                ? 'NA'
+                                : `${item.price} ${item.currency}`}
+                            </td>
+                            <td>
+                              {!item.property_for ? 'NA' : item.property_for}
+                            </td>
+                            <td>
+                              <a
+                                href=""
+                                className="btn btn-blue btn-sm btn-rounded-sm mb-0">
+                                View
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
                   </div>
@@ -276,4 +266,5 @@ export default function Properties() {
       </div>
     </div>
   );
-}
+};
+export default connect(null, {getPropertyList})(IsLoadingHOC(Properties));
