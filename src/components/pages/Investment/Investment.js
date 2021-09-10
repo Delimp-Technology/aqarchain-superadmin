@@ -25,9 +25,7 @@ const Investment = () => {
                       </div> */}
                       <div className="col-lg-4 col-12 my-lg-0 my-2">
                         <Link to="/dashboard/tokenization-process">
-                          <button
-                            className="btn btn-gradient-secondary w-100 has-border-radius"
-                            onclick="changeActiveTab('user-dashboard-nav-tab-tokenization-step-2')">
+                          <button className="btn btn-gradient-secondary w-100 has-border-radius">
                             Add new Property{' '}
                           </button>
                         </Link>
