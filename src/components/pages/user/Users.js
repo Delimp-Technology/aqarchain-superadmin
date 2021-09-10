@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {getUsersList} from '../../../redux/actions/Users';
 import IsLoadingHOC from '../../common/IsLoadingHOC';
+
 const Users = props => {
   const {getUsersList, setLoading} = props;
   const [userlist, setUserList] = useState([]);
@@ -43,7 +44,6 @@ const Users = props => {
                   <div className="row d-lg-flex align-items-center">
                     <div className="col-xl-6 col-lg-4">
                       <Link to="/dashboard/add-user">
-                        {' '}
                         <button className="btn btn-gradient-secondary mb-4">
                           <svg
                             className="mr-2"
@@ -194,9 +194,11 @@ const Users = props => {
                         {userlist.map((item, index) =>
                           index != 0 ? (
                             <tr key={index}>
-                              <td>{`${item.first_name} ${item.last_name}`}</td>
-                              <td>{item.contact}</td>
-                              <td>{item.email}</td>
+                              <td>{`${
+                                !item.first_name ? 'NA' : item.first_name
+                              } ${!item.last_name ? '' : item.last_name}`}</td>
+                              <td>{!item.contact ? 'NA' : item.contact}</td>
+                              <td>{!item.email ? 'NA' : item.email}</td>
                               <td>{item.status ? 'Active' : 'Inactive'}</td>
                               <td>
                                 <a

@@ -35,7 +35,8 @@ import PropertyProtected from '../components/pages/Propertyprotected';
 import PrivateRoute from './PrivateRoute';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import Investment from '../components/pages/Investment/Investment';
-import AddInvestmentProperty from '../components/pages/Investment/TokenizationProcess';
+import TokenizationProcess from '../components/pages/Investment/TokenizationProcess';
+import AddInvestmentProperty from '../components/pages/Investment/AddInvestmentProperty';
 
 const routes = (
   <>
@@ -94,6 +95,12 @@ const routes = (
           <PrivateRoute
             exact
             path="/dashboard/tokenization-process"
+            component={TokenizationProcess}
+            layout={DashboardLayout}
+          />
+          <PrivateRoute
+            exact
+            path="/dashboard/add-tokenization-property"
             component={AddInvestmentProperty}
             layout={DashboardLayout}
           />

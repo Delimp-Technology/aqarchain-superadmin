@@ -19,21 +19,21 @@ const Investment = () => {
                   role="tabpanel"
                   aria-labelledby="superadmin-nav-tab-users-tab">
                   <div className="text-center text-lg-left p-4 p-lg-5 has-box-shadow">
-                    <div class="row d-lg-flex mb-5 align-items-center">
-                      {/* <div class="col-lg-12 col-12 text-lg-left text-center">
-                        <h3 class="mb-3 mb-lg-4">Start Tokenization</h3>
+                    <div className="row d-lg-flex mb-5 align-items-center">
+                      {/* <div className="col-lg-12 col-12 text-lg-left text-center">
+                        <h3 className="mb-3 mb-lg-4">Start Tokenization</h3>
                       </div> */}
-                      <div class="col-lg-4 col-12 my-lg-0 my-2">
+                      <div className="col-lg-4 col-12 my-lg-0 my-2">
                         <Link to="/dashboard/tokenization-process">
                           <button
-                            class="btn btn-gradient-secondary w-100 has-border-radius"
+                            className="btn btn-gradient-secondary w-100 has-border-radius"
                             onclick="changeActiveTab('user-dashboard-nav-tab-tokenization-step-2')">
                             Add new Property{' '}
                           </button>
                         </Link>
                       </div>
-                      <div class="col-lg-6 col-12 my-lg-0 my-2">
-                        <select class="form-control secondary-select">
+                      <div className="col-lg-6 col-12 my-lg-0 my-2">
+                        <select className="form-control secondary-select">
                           <option>Select from Listed Properties</option>
                           <option>Listed Property #1</option>
                           <option>Listed Property #2</option>

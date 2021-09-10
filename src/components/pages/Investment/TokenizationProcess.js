@@ -18,91 +18,91 @@ const TokenizationProcess = () => {
                   role="tabpanel"
                   aria-labelledby="superadmin-nav-tab-users-tab">
                   <div className="text-center text-lg-left p-4 p-lg-5 has-box-shadow">
-                    <div class="row text-lg-left text-center">
-                      <div class="col-xl-12 col-lg-12 ">
-                        <h3 class="font-weight-bold mb-0">
+                    <div className="row text-lg-left text-center">
+                      <div className="col-xl-12 col-lg-12 ">
+                        <h3 className="font-weight-bold mb-0">
                           Tokenization process
                         </h3>
                       </div>
                     </div>
-                    <div class="row my-5">
-                      <div class="col-lg-12 col-12">
-                        <label class="mr-3 mb-lg-0 mb-3">
+                    <div className="row my-5">
+                      <div className="col-lg-12 col-12">
+                        <label className="mr-3 mb-lg-0 mb-3">
                           Do you want to tokenize this property?
                         </label>
-                        <div class="form-check form-check-inline mr-3">
+                        <div className="form-check form-check-inline mr-3">
                           <input
-                            class="form-check-input"
+                            className="form-check-input"
                             type="radio"
                             name="tokenize-property"
                             id="tokenize-property-true"
                             value="buy"
                           />
                           <label
-                            class="form-check-label"
-                            for="tokenize-property-true">
+                            className="form-check-label"
+                            htmlFor="tokenize-property-true">
                             Yes
                           </label>
                         </div>
-                        <div class="form-check form-check-inline mr-3">
+                        <div className="form-check form-check-inline mr-3">
                           <input
-                            class="form-check-input"
+                            className="form-check-input"
                             type="radio"
                             name="tokenize-property"
                             id="tokenization-property-false"
                             value="rent"
                           />
                           <label
-                            class="form-check-label"
-                            for="tokenization-property-false">
+                            className="form-check-label"
+                            htmlFor="tokenization-property-false">
                             No
                           </label>
                         </div>
                       </div>
                     </div>
-                    <div class="row my-4">
-                      <div class="col-lg-6 col-12">
-                        <div class="form-group">
-                          <label for="property-name-title">
+                    <div className="row my-4">
+                      <div className="col-lg-6 col-12">
+                        <div className="form-group">
+                          <label htmlFor="property-name-title">
                             Property Name / Title
                           </label>
                           <input
                             type="text"
-                            class="form-control secondary-input"
+                            className="form-control secondary-input"
                             id="property-name-title"
                             placeholder="Enter Property Name"
                           />
                         </div>
                       </div>
                     </div>
-                    <div class="row my-4">
-                      <div class="col-lg-6 col-12">
-                        <div class="form-group">
-                          <label for="property-owner-name">
+                    <div className="row my-4">
+                      <div className="col-lg-6 col-12">
+                        <div className="form-group">
+                          <label htmlFor="property-owner-name">
                             Property Owner Name
                           </label>
                           <input
                             type="text"
-                            class="form-control secondary-input"
+                            className="form-control secondary-input"
                             id="property-owner-name"
                             placeholder="Enter Property Owner Name"
                           />
                         </div>
                       </div>
-                      <div class="col-lg-6 col-12">
-                        <div class="form-group">
-                          <label for="ownership">Ownership %</label>
+                      <div className="col-lg-6 col-12">
+                        <div className="form-group">
+                          <label htmlFor="ownership">Ownership %</label>
                           <input
                             type="number"
-                            class="form-control secondary-input"
+                            className="form-control secondary-input"
                             id="ownership"
                           />
                         </div>
                       </div>
                     </div>
-                    <div class="row my-5">
-                      <div class="col-lg-4 col-md-6 col-12">
-                        <button class="btn btn-gradient-secondary w-100">
+                    <div className="row my-5">
+                      <div className="col-lg-4 col-md-6 col-12">
+                        <button className="btn btn-gradient-secondary w-100">
                           Add Owners
                         </button>
                       </div>
@@ -110,94 +110,100 @@ const TokenizationProcess = () => {
                     <span>
                       <p>Upload Property Ownership Document</p>
                     </span>
-                    <div class="row my-5">
-                      <div class="col-lg-3 col-md-6 col-12 my-lg-0 my-2">
-                        <label class="dashed-border p-4" for="document-1">
-                          <div class="image-upload">
+                    <div className="row my-5">
+                      <div className="col-lg-3 col-md-6 col-12 my-lg-0 my-2">
+                        <label
+                          className="dashed-border p-4"
+                          htmlFor="document-1">
+                          <div className="image-upload">
                             <img
-                              class="mx-auto cursor"
+                              className="mx-auto cursor"
                               src="public/images/Upload.svg"
                               style={{width: '30px'}}
                             />
                             <input
                               type="file"
-                              class="custom-file-input d-none"
+                              className="custom-file-input d-none"
                               accept="image/*"
                               id="document-1"
                             />
-                            <p class="mt-3">Document Title 1</p>
+                            <p className="mt-3">Document Title 1</p>
                           </div>
                         </label>
                       </div>
-                      <div class="col-lg-3 col-md-6 col-12 my-lg-0 my-2">
-                        <label class="dashed-border p-4" for="document-2">
-                          <div class="image-upload">
+                      <div className="col-lg-3 col-md-6 col-12 my-lg-0 my-2">
+                        <label
+                          className="dashed-border p-4"
+                          htmlFor="document-2">
+                          <div className="image-upload">
                             <img
-                              class="mx-auto cursor"
+                              className="mx-auto cursor"
                               src="public/images/Upload.svg"
                               style={{width: '30px'}}
                             />
                             <input
                               type="file"
-                              class="custom-file-input d-none"
+                              className="custom-file-input d-none"
                               accept="image/*"
                               id="document-2"
                             />
-                            <p class="mt-3">Document Title 2</p>
+                            <p className="mt-3">Document Title 2</p>
                           </div>
                         </label>
                       </div>
-                      <div class="col-lg-3 col-md-6 col-12 my-lg-0 my-2">
-                        <label class="dashed-border p-4" for="document-3">
-                          <div class="image-upload">
+                      <div className="col-lg-3 col-md-6 col-12 my-lg-0 my-2">
+                        <label
+                          className="dashed-border p-4"
+                          htmlFor="document-3">
+                          <div className="image-upload">
                             <img
-                              class="mx-auto cursor"
+                              className="mx-auto cursor"
                               src="public/images/Upload.svg"
                               style={{width: '30px'}}
                             />
                             <input
                               type="file"
-                              class="custom-file-input d-none"
+                              className="custom-file-input d-none"
                               accept="image/*"
                               id="document-3"
                             />
-                            <p class="mt-3">Document Title 3</p>
+                            <p className="mt-3">Document Title 3</p>
                           </div>
                         </label>
                       </div>
-                      <div class="col-lg-3 col-md-6 col-12 my-lg-0 my-2">
+                      <div className="col-lg-3 col-md-6 col-12 my-lg-0 my-2">
                         <label
-                          class="dashed-border p-4"
-                          for="add-more-document">
-                          <div class="image-upload">
+                          className="dashed-border p-4"
+                          htmlFor="add-more-document">
+                          <div className="image-upload">
                             <img
-                              class="mx-auto cursor"
+                              className="mx-auto cursor"
                               src="public/images/icon-add-more-files.svg"
                               style={{width: '30px'}}
                             />
                             <input
                               type="file"
-                              class="custom-file-input d-none"
+                              className="custom-file-input d-none"
                               accept="image/*"
                               id="add-more-document"
                             />
-                            <p class="mt-3">Add More Document</p>
+                            <p className="mt-3">Add More Document</p>
                           </div>
                         </label>
                       </div>
                     </div>
-                    <div class="row my-4">
-                      <div class="col-lg-6 col-12">
+                    <div className="row my-4">
+                      <div className="col-lg-6 col-12">
                         <label>Property Valuation</label>
-                        <div class="form-group form-inline">
+                        <div className="form-group form-inline">
                           <input
                             type="number"
-                            class="form-control secondary-input mr-lg-2"
+                            className="form-control secondary-input mr-lg-2"
                             id="property-valuation"
                             placeholder="Property Valuation"
                           />
                           <select
-                            class="form-control secondary-select"
+                            className="form-control secondary-select"
                             id="property-valuation-currency">
                             <option>AED</option>
                             <option>AED #1</option>
@@ -209,39 +215,41 @@ const TokenizationProcess = () => {
                         </div>
                       </div>
                     </div>
-                    <div class="row my-5">
-                      <div class="col-lg-12 col-md-12 col-12">
+                    <div className="row my-5">
+                      <div className="col-lg-12 col-md-12 col-12">
                         <span>
                           <p>Property Valuation Certificate</p>
                         </span>
                         <label
-                          class="dashed-border p-4"
-                          for="property-valuation-certificate">
-                          <div class="image-upload">
+                          className="dashed-border p-4"
+                          htmlFor="property-valuation-certificate">
+                          <div className="image-upload">
                             <img
-                              class="mx-auto cursor"
+                              className="mx-auto cursor"
                               src="public/images/Upload.svg"
                               style={{width: '30px'}}
                             />
                             <input
                               type="file"
-                              class="custom-file-input d-none"
+                              className="custom-file-input d-none"
                               accept="image/*"
                               id="property-valuation-certificate"
                             />
-                            <p class="mt-3">Click here to upload</p>
+                            <p className="mt-3">Click here to upload</p>
                           </div>
                         </label>
                       </div>
                     </div>
-                    <div class="row my-5">
-                      <div class="col-lg-4 col-md-6 col-12">
-                        <button
-                          class="btn btn-gradient-secondary w-100"
-                          data-toggle="modal"
-                          data-target="#myModal">
-                          Submit For Verification
-                        </button>
+                    <div className="row my-5">
+                      <div className="col-lg-4 col-md-6 col-12">
+                        <Link to="/dashboard/add-tokenization-property">
+                          <button
+                            className="btn btn-gradient-secondary w-100"
+                            data-toggle="modal"
+                            data-target="#myModal">
+                            Submit For Verification
+                          </button>
+                        </Link>
                       </div>
                     </div>
                   </div>
