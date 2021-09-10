@@ -173,14 +173,16 @@ const Agents = props => {
                           index != 0 ? (
                             <tr key={index}>
                               <td>{`${item.first_name} ${item.last_name}`}</td>
-                              <td>{item.companyName}</td>
-                              <td>{item.email}</td>
+                              <td>
+                                {!item.companyName ? 'NA' : item.companyName}
+                              </td>
+                              <td>{!item.email ? 'NA' : item.email}</td>
                               <td>{item.status ? 'Active' : 'Inactive'}</td>
                               <td>
                                 <a
                                   href=""
                                   className="btn btn-success btn-sm btn-rounded-sm mb-0">
-                                  {item.kyc_status}
+                                  {!item.kyc_status ? 'NA' : item.kyc_status}
                                 </a>
                               </td>
                               <td>
