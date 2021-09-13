@@ -1,6 +1,6 @@
 import React from 'react';
 import {SearchForm} from '../../common/Search';
-export default function AddUser() {
+const AddUser = () => {
   return (
     <div id="content" className="flex-grow-1">
       <div id="page-content" className="py-lg-5 pl-lg-5 p-md-2 p-3">
@@ -11,34 +11,27 @@ export default function AddUser() {
               className="tab-content dashboard-nav-tabs-content"
               id="superadmin-nav-tabs-content">
               <div
-                className="tab-pane fade"
+                className="tab-pane fade active show"
                 id="superadmin-nav-tab-add-user"
                 role="tabpanel"
                 aria-labelledby="superadmin-nav-tab-add-user-tab">
                 <div className="text-center text-lg-left p-4 p-lg-5 has-box-shadow">
                   <div className="row">
                     <div className="col-12 ml-5">
-                      <a
-                        className="text-dark cursor-pointer"
-                        onClick="changeActiveTab('superadmin-nav-tab-users')">
-                        <h3>
-                          <i className="fas fa-arrow-left mr-2" />
-                          Add User
-                        </h3>
-                      </a>
+                      <h3 className="font-weight-bold mb-0">Add User</h3>
                     </div>
                   </div>
                   <div className="row">
-                    <div className="col-2 my-4">
-                      <div className="user-profile-pic-section text-center">
-                        <img
-                          className="user-profile-pic"
-                          src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-                          alt=""
-                        />
+                    <div className="col-12 pl-5">
+                      <div className="col-2 my-4">
+                        <div className="user-profile-pic-section text-center">
+                          <img
+                            className="user-profile-pic"
+                            src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+                            alt=""
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <div className="col-10 pl-5 border-left">
                       <div className="row my-4">
                         <div className="col-lg-6 col-12">
                           <div className="form-group">
@@ -546,4 +539,6 @@ export default function AddUser() {
       </div>
     </div>
   );
-}
+};
+
+export default AddUser;
