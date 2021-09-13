@@ -14,7 +14,6 @@ const Agents = props => {
     dispatch(getAgentsList())
       .then(
         response => {
-          console.log('response', response);
           setAgentList(response.data);
           setLoading(false);
         },
@@ -157,20 +156,20 @@ const Agents = props => {
                     </div>
                   </div>
                   <div className="dashboard-table-container table-responsive">
-                    <table className="dashboard-table">
-                      <thead>
-                        <tr>
-                          <th>Agent Name</th>
-                          <th>Company Name</th>
-                          <th>Email</th>
-                          <th>Status</th>
-                          <th>KYC</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {agentList.map((item, index) =>
-                          index != 0 ? (
+                    {agentList.length != 0 ? (
+                      <table className="dashboard-table">
+                        <thead>
+                          <tr>
+                            <th>Agent Name</th>
+                            <th>Company Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>KYC</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {agentList.map((item, index) => (
                             <tr key={index}>
                               <td>{`${item.first_name} ${item.last_name}`}</td>
                               <td>
@@ -193,10 +192,12 @@ const Agents = props => {
                                 </a>
                               </td>
                             </tr>
-                          ) : null,
-                        )}
-                      </tbody>
-                    </table>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <>No Data Found</>
+                    )}
                   </div>
                   <div className="dashboard-table-meta mt-4">
                     <div className="row d-lg-flex align-items-center">

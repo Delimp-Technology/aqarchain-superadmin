@@ -21,7 +21,6 @@ const Properties = props => {
         },
         error => {
           setLoading(false);
-          console.log('error', error);
         },
       )
       .catch(error => {
@@ -162,52 +161,56 @@ const Properties = props => {
                     </div>
                   </div>
                   <div className="dashboard-table-container table-responsive">
-                    <table className="dashboard-table">
-                      <thead>
-                        <tr>
-                          <th>Property ID</th>
-                          <th>Property Type</th>
-                          <th>City & Country</th>
-                          <th>Listed By</th>
-                          <th>Price</th>
-                          <th>Sell/Rent</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {propertyList.map((item, index) => (
-                          <tr key={index}>
-                            <td>{!item.id ? 'NA' : item.id}</td>
-                            <td>
-                              {!item.property_type_data[0].type_title
-                                ? 'NA'
-                                : item.property_type_data[0].type_title}
-                            </td>
-                            <td>
-                              {!item.city && !item.country
-                                ? 'NA'
-                                : ` ${item.city}, ${item.country}`}
-                            </td>
-                            <td>{!item.listedBy ? 'NA' : item.listedBy}</td>
-                            <td>
-                              {!item.price && !item.currency
-                                ? 'NA'
-                                : `${item.price} ${item.currency}`}
-                            </td>
-                            <td>
-                              {!item.property_for ? 'NA' : item.property_for}
-                            </td>
-                            <td>
-                              <a
-                                href=""
-                                className="btn btn-blue btn-sm btn-rounded-sm mb-0">
-                                View
-                              </a>
-                            </td>
+                    {propertyList.length != 0 ? (
+                      <table className="dashboard-table">
+                        <thead>
+                          <tr>
+                            <th>Property ID</th>
+                            <th>Property Type</th>
+                            <th>City & Country</th>
+                            <th>Listed By</th>
+                            <th>Price</th>
+                            <th>Sell/Rent</th>
+                            <th>Action</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {propertyList.map((item, index) => (
+                            <tr key={index}>
+                              <td>{!item.id ? 'NA' : item.id}</td>
+                              <td>
+                                {!item.property_type_data[0].type_title
+                                  ? 'NA'
+                                  : item.property_type_data[0].type_title}
+                              </td>
+                              <td>
+                                {!item.city && !item.country
+                                  ? 'NA'
+                                  : ` ${item.city}, ${item.country}`}
+                              </td>
+                              <td>{!item.listedBy ? 'NA' : item.listedBy}</td>
+                              <td>
+                                {!item.price && !item.currency
+                                  ? 'NA'
+                                  : `${item.price} ${item.currency}`}
+                              </td>
+                              <td>
+                                {!item.property_for ? 'NA' : item.property_for}
+                              </td>
+                              <td>
+                                <a
+                                  href=""
+                                  className="btn btn-blue btn-sm btn-rounded-sm mb-0">
+                                  View
+                                </a>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <>No Data Found</>
+                    )}
                   </div>
                   <div className="dashboard-table-meta mt-4">
                     <div className="row d-lg-flex align-items-center">
