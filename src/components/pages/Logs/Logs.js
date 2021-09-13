@@ -75,7 +75,7 @@ const Logs = props => {
                   </div>
                   <div className="dashboard-table-container table-responsive">
                     {!logsData ? (
-                      <>Data Not Found</>
+                      <>No Data Found</>
                     ) : (
                       <table className="dashboard-table">
                         <thead>

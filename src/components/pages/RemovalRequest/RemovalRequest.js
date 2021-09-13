@@ -1,7 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {SearchForm} from '../../common/Search';
 import {useDispatch} from 'react-redux';
-import {approvedUser, getRequestsList} from '../../../redux/actions';
+import {
+  approvedUser,
+  approvedProperty,
+  getRequestsList,
+} from '../../../redux/actions';
 import IsLoadingHOC from '../../common/IsLoadingHOC';
 import {toast} from 'react-toastify';
 
@@ -9,7 +13,7 @@ const RemovalRequest = props => {
   const {setLoading} = props;
   const dispatch = useDispatch();
 
-  const [requestedData, setRequestedData] = useState();
+  const [requestedData, setRequestedData] = useState([]);
 
   useEffect(() => {
     dispatch(getRequestsList())
@@ -30,6 +34,24 @@ const RemovalRequest = props => {
   const approvedUserAction = id => {
     setLoading(true);
     dispatch(approvedUser(id))
+      .then(
+        response => {
+          setLoading(false);
+          toast.error(response.message);
+        },
+        error => {
+          setLoading(false);
+          toast.error(error.message);
+        },
+      )
+      .catch(error => {
+        console.log(error);
+        setLoading(false);
+      });
+  };
+  const approvedPropertyAction = id => {
+    setLoading(true);
+    dispatch(approvedProperty(id))
       .then(
         response => {
           setLoading(false);
@@ -68,9 +90,7 @@ const RemovalRequest = props => {
                     </div>
                   </div>
                   <div className="dashboard-table-container table-responsive">
-                    {!requestedData ? (
-                      <>No Data Found</>
-                    ) : (
+                    {requestedData.length != 0 ? (
                       <table className="dashboard-table">
                         <thead>
                           <tr>
@@ -101,7 +121,7 @@ const RemovalRequest = props => {
                                   <button
                                     onClick={
                                       item.id
-                                        ? null
+                                        ? () => approvedPropertyAction(item.id)
                                         : () => approvedUserAction(item._id)
                                     }
                                     className="btn btn-success btn-sm btn-rounded-sm mb-0 mr-2">
@@ -116,6 +136,8 @@ const RemovalRequest = props => {
                           })}
                         </tbody>
                       </table>
+                    ) : (
+                      'No Data Found'
                     )}
                   </div>
                   <div className="dashboard-table-meta mt-4">
