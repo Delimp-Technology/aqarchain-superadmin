@@ -20,6 +20,7 @@ import {FeatureType} from '../components/pages/featuretype';
 import {PropertyType} from '../components/pages/propertytype';
 import Users from '../components/pages/user/Users';
 import AddUser from '../components/pages/user/AddUser';
+import Add from '../components/pages/user/Add';
 import Kyc from '../components/pages/Kyc/Kyc';
 import Tokenization from '../components/pages/Tokenization/Tokenization';
 import Banking from '../components/pages/Banking/Banking';

@@ -9,7 +9,7 @@ export const getUsersList = data => async dispatch => {
           resolve(response.data);
         },
         error => {
-          reject(error);
+          reject(error.response.data);
         },
       )
       .catch(error => reject(error));

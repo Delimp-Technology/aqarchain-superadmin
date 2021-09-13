@@ -6,7 +6,7 @@ export const getPropertyList = data => async dispatch => {
       .post('/admin/property/list', data)
       .then(
         response => resolve(response.data),
-        error => reject(error),
+        error => reject(error.response.data),
       )
       .catch(error => reject(error));
   });
