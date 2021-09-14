@@ -71,3 +71,21 @@ export const getLogsList = () => async dispatch => {
       });
   });
 };
+
+export const getRolesList = () => async dispathc => {
+  return new Promise(async (resolve, reject) => {
+    await authAxios()
+      .get('/admin/role')
+      .then(
+        response => {
+          resolve(response.data);
+        },
+        error => {
+          reject(error.response.data);
+        },
+      )
+      .catch(error => {
+        reject(error);
+      });
+  });
+};
