@@ -1,17 +1,14 @@
-// import {SAVE_TOKEN} from '../actions/types';
+import {SAVE_ROLES} from '../actions/types';
 
-// let initialState = {
-//   token: '',
-//   language: 'en',
-//   data: {},
-// };
+let initialState = {
+  role: [],
+};
 
-// export default function(state = initialState, action) {
-//   console.log(action.type, action.payload);
-//   switch (action.type) {
-//     case SAVE_TOKEN:
-//       return {...state, token: 'action.payload'};
-//     default:
-//       return state;
-//   }
-// }
+export default function(state = initialState, action) {
+  switch (action.type) {
+    case SAVE_ROLES:
+      return {...state, role: action.payload};
+    default:
+      return state;
+  }
+}

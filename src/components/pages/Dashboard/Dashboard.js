@@ -1,9 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import {connect, useDispatch} from 'react-redux';
+import {getRolesList} from '../../../redux/actions';
 import {SearchForm} from '../../common/Search';
 import SuperAdminCard from '../../common/SuperAdminCard';
 
 const Dashboard = props => {
+  const {getRolesList} = props;
+  useEffect(() => {
+    // Basic Config
+    getRolesList();
+  }, []);
   return (
     <div id="content" className="flex-grow-1">
       <div id="page-content" className="py-lg-5 pl-lg-5 p-md-2 p-3">
@@ -211,4 +217,4 @@ const Dashboard = props => {
   );
 };
 
-export default connect(null, {})(Dashboard);
+export default connect(null, {getRolesList})(Dashboard);

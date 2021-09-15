@@ -1,6 +1,14 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import {useSelector} from 'react-redux';
+import {capFirstLetter} from '../../../utils/utils';
 import {SearchForm} from '../../common/Search';
-const AddUser = () => {
+const AddUser = prosp => {
+  const [roleList, setRoleList] = useState([]);
+  const state = useSelector(state => state);
+  useEffect(() => {
+    setRoleList(state.config.role);
+  }, []);
+  console.log('Yes I am working', roleList);
   return (
     <div id="content" className="flex-grow-1">
       <div id="page-content" className="py-lg-5 pl-lg-5 p-md-2 p-3">
@@ -92,432 +100,114 @@ const AddUser = () => {
                       </div>
                       <div className="row">
                         <div className="col-12">
-                          <label htmlFor>Role</label>
+                          <label htmlFor="">Role</label>
                         </div>
                       </div>
                       <div className="row mb-4">
                         <div className="col-12">
                           <div id="accordion">
-                            <div className="card" id="first-card">
-                              <div className="card-header" id="headingOne">
-                                <h5 className="mb-0">
-                                  <button
-                                    className="btn btn-link w-100 text-left"
-                                    data-toggle="collapse"
-                                    data-target="#collapseOne"
-                                    aria-expanded="true"
-                                    aria-controls="collapseOne">
-                                    <i
-                                      className="fa float-right"
-                                      aria-hidden="true"
-                                    />
-                                    <input
-                                      type="checkbox"
-                                      id="input1"
-                                      name="input1"
-                                      defaultValue="Bike"
-                                    />
-                                    <label
-                                      onClick="changeActiveAccordian('#first-card')"
-                                      className="mb-0 text-dark"
-                                      htmlFor="input1">
-                                      Properties Manager
-                                    </label>
-                                    <br />
-                                  </button>
-                                </h5>
-                              </div>
-                              <div
-                                id="collapseOne"
-                                className="collapse"
-                                aria-labelledby="headingOne"
-                                data-parent="#accordion">
-                                <div className="card-body">
-                                  <div className="row">
-                                    <div className="col-3 d-flex align-items-center">
-                                      <p className="d-inline-block align-middle mr-3 mb-0">
-                                        Can view
-                                      </p>
-                                      <input
-                                        className="ios-switch --light d-inline-block"
-                                        type="checkbox"
-                                        defaultChecked
-                                      />
+                            {roleList !== 0 ? (
+                              <>
+                                {roleList.map((item, index) => (
+                                  <div
+                                    className="card"
+                                    key={index}
+                                    id="first-card">
+                                    <div
+                                      className="card-header"
+                                      id={`headingOne${item._id}`}>
+                                      <h5 className="mb-0">
+                                        <button
+                                          className="btn btn-link w-100 text-left"
+                                          data-toggle="collapse"
+                                          data-target={`#collapseOne${item._id}`}
+                                          aria-expanded="true"
+                                          aria-controls={`collapseOne${item._id}`}>
+                                          <i
+                                            className="fa float-right"
+                                            aria-hidden="true"
+                                          />
+                                          <input
+                                            type="checkbox"
+                                            id={`input${item._id}`}
+                                            name="input1"
+                                            defaultValue="Bike"
+                                          />
+                                          <label
+                                            className="mb-0 text-dark"
+                                            style={{
+                                              textTransform: 'capitalize',
+                                            }}
+                                            htmlFor={`input${item._id}`}>
+                                            {item.name}
+                                          </label>
+                                          <br />
+                                        </button>
+                                      </h5>
                                     </div>
-                                    <div className="col-3 d-flex align-items-center">
-                                      <p className="d-inline-block align-middle mr-3 mb-0">
-                                        Can Remove
-                                      </p>
-                                      <input
-                                        className="ios-switch --light d-inline-block"
-                                        type="checkbox"
-                                        defaultChecked
-                                      />
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="card" id="second-card">
-                              <div className="card-header" id="headingTwo">
-                                <h5 className="mb-0">
-                                  <button
-                                    className="btn btn-link  w-100 text-left"
-                                    data-toggle="collapse"
-                                    data-target="#collapseTwo"
-                                    aria-expanded="true"
-                                    aria-controls="collapseOne">
-                                    <i
-                                      className="fa float-right"
-                                      aria-hidden="true"
-                                    />
-                                    <input
-                                      type="checkbox"
-                                      id="input2"
-                                      name="input2"
-                                      defaultValue="Bike"
-                                    />
-                                    <label
-                                      onClick="changeActiveAccordian('#second-card')"
-                                      className="mb-0 text-dark"
-                                      htmlFor="input2">
-                                      User Manager
-                                    </label>
-                                    <br />
-                                  </button>
-                                </h5>
-                              </div>
-                              <div
-                                id="collapseTwo"
-                                className="collapse"
-                                aria-labelledby="headingTwo"
-                                data-parent="#accordion">
-                                <div className="card-body">
-                                  <div className="row">
-                                    <div className="col-3 d-flex align-items-center">
-                                      <p className="d-inline-block align-middle mr-3 mb-0">
-                                        Can view
-                                      </p>
-                                      <input
-                                        className="ios-switch --light d-inline-block"
-                                        type="checkbox"
-                                        defaultChecked
-                                      />
-                                    </div>
-                                    <div className="col-3 d-flex align-items-center">
-                                      <p className="d-inline-block align-middle mr-3 mb-0">
-                                        Can Remove
-                                      </p>
-                                      <input
-                                        className="ios-switch --light d-inline-block"
-                                        type="checkbox"
-                                        defaultChecked
-                                      />
+                                    <div
+                                      id={`collapseOne${item._id}`}
+                                      className="collapse"
+                                      aria-labelledby={`headingOne${item._id}`}
+                                      data-parent="#accordion">
+                                      <div className="card-body">
+                                        <div
+                                          className="row"
+                                          style={{rowGap: '0.75rem'}}>
+                                          {Object.keys(
+                                            item.resource[0].actions,
+                                          ).map((key, index) => {
+                                            return (
+                                              <div
+                                                className="col-3 d-flex align-items-center"
+                                                key={index}>
+                                                <p
+                                                  className="align-middle mr-3 mb-0"
+                                                  style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.5rem',
+                                                  }}>
+                                                  {item.resource[0].actions[
+                                                    key
+                                                  ] ? (
+                                                    <svg
+                                                      xmlns="http://www.w3.org/2000/svg"
+                                                      viewBox="0 0 24 24"
+                                                      width="20"
+                                                      height="20">
+                                                      <path
+                                                        fill={'#fbb040'}
+                                                        d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.997-6l7.07-7.071-1.414-1.414-5.656 5.657-2.829-2.829-1.414 1.414L11.003 16z"
+                                                      />
+                                                    </svg>
+                                                  ) : (
+                                                    <svg
+                                                      xmlns="http://www.w3.org/2000/svg"
+                                                      viewBox="0 0 24 24"
+                                                      width="20"
+                                                      height="20">
+                                                      <path
+                                                        fill="#9a9a9a"
+                                                        d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-11.414L9.172 7.757 7.757 9.172 10.586 12l-2.829 2.828 1.415 1.415L12 13.414l2.828 2.829 1.415-1.415L13.414 12l2.829-2.828-1.415-1.415L12 10.586z"
+                                                      />
+                                                    </svg>
+                                                  )}
+
+                                                  {capFirstLetter(key)}
+                                                </p>
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="card" id="third-card">
-                              <div className="card-header" id="headingThree">
-                                <h5 className="mb-0">
-                                  <button
-                                    className="btn btn-link  w-100 text-left"
-                                    data-toggle="collapse"
-                                    data-target="#collapseThree"
-                                    aria-expanded="true"
-                                    aria-controls="collapseOne">
-                                    <i
-                                      className="fa float-right"
-                                      aria-hidden="true"
-                                    />
-                                    <input
-                                      type="checkbox"
-                                      id="input3"
-                                      name="input3"
-                                      defaultValue="Bike"
-                                    />
-                                    <label
-                                      onClick="changeActiveAccordian('#third-card')"
-                                      className="mb-0 text-dark"
-                                      htmlFor="input3">
-                                      Agents Manager
-                                    </label>
-                                    <br />
-                                  </button>
-                                </h5>
-                              </div>
-                              <div
-                                id="collapseThree"
-                                className="collapse"
-                                aria-labelledby="headingThree"
-                                data-parent="#accordion">
-                                <div className="card-body">
-                                  <div className="row">
-                                    <div className="col-3 d-flex align-items-center">
-                                      <p className="d-inline-block align-middle mr-3 mb-0">
-                                        Can view
-                                      </p>
-                                      <input
-                                        className="ios-switch --light d-inline-block"
-                                        type="checkbox"
-                                        defaultChecked
-                                      />
-                                    </div>
-                                    <div className="col-3 d-flex align-items-center">
-                                      <p className="d-inline-block align-middle mr-3 mb-0">
-                                        Can Remove
-                                      </p>
-                                      <input
-                                        className="ios-switch --light d-inline-block"
-                                        type="checkbox"
-                                        defaultChecked
-                                      />
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="card" id="fourth-card">
-                              <div className="card-header" id="headingFour">
-                                <h5 className="mb-0">
-                                  <button
-                                    className="btn btn-link  w-100 text-left"
-                                    data-toggle="collapse"
-                                    data-target="#collapseFour"
-                                    aria-expanded="true"
-                                    aria-controls="collapseOne">
-                                    <i
-                                      className="fa float-right"
-                                      aria-hidden="true"
-                                    />
-                                    <input
-                                      type="checkbox"
-                                      id="input4"
-                                      name="input4"
-                                      defaultValue="Bike"
-                                    />
-                                    <label
-                                      onClick="changeActiveAccordian('#fourth-card')"
-                                      className="mb-0 text-dark"
-                                      htmlFor="input4">
-                                      KYC Manager
-                                    </label>
-                                    <br />
-                                  </button>
-                                </h5>
-                              </div>
-                              <div
-                                id="collapseFour"
-                                className="collapse"
-                                aria-labelledby="headingFour"
-                                data-parent="#accordion">
-                                <div className="card-body">
-                                  <div className="row">
-                                    <div className="col-3 d-flex align-items-center">
-                                      <p className="d-inline-block align-middle mr-3 mb-0">
-                                        Can view
-                                      </p>
-                                      <input
-                                        className="ios-switch --light d-inline-block"
-                                        type="checkbox"
-                                        defaultChecked
-                                      />
-                                    </div>
-                                    <div className="col-3 d-flex align-items-center">
-                                      <p className="d-inline-block align-middle mr-3 mb-0">
-                                        Can Remove
-                                      </p>
-                                      <input
-                                        className="ios-switch --light d-inline-block"
-                                        type="checkbox"
-                                        defaultChecked
-                                      />
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="card" id="fifth-card">
-                              <div className="card-header" id="headingFifth">
-                                <h5 className="mb-0">
-                                  <button
-                                    className="btn btn-link  w-100 text-left"
-                                    data-toggle="collapse"
-                                    data-target="#collapseFive"
-                                    aria-expanded="true"
-                                    aria-controls="collapseOne">
-                                    <i
-                                      className="fa float-right"
-                                      aria-hidden="true"
-                                    />
-                                    <input
-                                      type="checkbox"
-                                      id="input5"
-                                      name="input5"
-                                      defaultValue="Bike"
-                                    />
-                                    <label
-                                      onClick="changeActiveAccordian('#fifth-card')"
-                                      className="mb-0 text-dark"
-                                      htmlFor="input5">
-                                      Documents Manager
-                                    </label>
-                                    <br />
-                                  </button>
-                                </h5>
-                              </div>
-                              <div
-                                id="collapseFive"
-                                className="collapse"
-                                aria-labelledby="headingFifth"
-                                data-parent="#accordion">
-                                <div className="card-body">
-                                  <div className="row">
-                                    <div className="col-3 d-flex align-items-center">
-                                      <p className="d-inline-block align-middle mr-3 mb-0">
-                                        Can view
-                                      </p>
-                                      <input
-                                        className="ios-switch --light d-inline-block"
-                                        type="checkbox"
-                                        defaultChecked
-                                      />
-                                    </div>
-                                    <div className="col-3 d-flex align-items-center">
-                                      <p className="d-inline-block align-middle mr-3 mb-0">
-                                        Can Remove
-                                      </p>
-                                      <input
-                                        className="ios-switch --light d-inline-block"
-                                        type="checkbox"
-                                        defaultChecked
-                                      />
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="card" id="sixth-card">
-                              <div className="card-header" id="headingSixth">
-                                <h5 className="mb-0">
-                                  <button
-                                    className="btn btn-link  w-100 text-left"
-                                    data-toggle="collapse"
-                                    data-target="#collapseSix"
-                                    aria-expanded="true"
-                                    aria-controls="collapseOne">
-                                    <i
-                                      className="fa float-right"
-                                      aria-hidden="true"
-                                    />
-                                    <input
-                                      type="checkbox"
-                                      id="input6"
-                                      name="input6"
-                                      defaultValue="Bike"
-                                    />
-                                    <label
-                                      onClick="changeActiveAccordian('#sixth-card')"
-                                      className="mb-0 text-dark"
-                                      htmlFor="input6">
-                                      Tokenization Manager
-                                    </label>
-                                    <br />
-                                  </button>
-                                </h5>
-                              </div>
-                              <div
-                                id="collapseSix"
-                                className="collapse"
-                                aria-labelledby="headingSixth"
-                                data-parent="#accordion">
-                                <div className="card-body">
-                                  <div className="row">
-                                    <div className="col-3 d-flex align-items-center">
-                                      <p className="d-inline-block align-middle mr-3 mb-0">
-                                        Can view
-                                      </p>
-                                      <input
-                                        className="ios-switch --light d-inline-block"
-                                        type="checkbox"
-                                        defaultChecked
-                                      />
-                                    </div>
-                                    <div className="col-3 d-flex align-items-center">
-                                      <p className="d-inline-block align-middle mr-3 mb-0">
-                                        Can Remove
-                                      </p>
-                                      <input
-                                        className="ios-switch --light d-inline-block"
-                                        type="checkbox"
-                                        defaultChecked
-                                      />
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="card" id="seventh-card">
-                              <div className="card-header" id="headingSeventh">
-                                <h5 className="mb-0">
-                                  <button
-                                    className="btn btn-link  w-100 text-left"
-                                    data-toggle="collapse"
-                                    data-target="#collapseSeven"
-                                    aria-expanded="true"
-                                    aria-controls="collapseOne">
-                                    <i
-                                      className="fa float-right"
-                                      aria-hidden="true"
-                                    />
-                                    <input
-                                      type="checkbox"
-                                      id="input7"
-                                      name="input7"
-                                      defaultValue="Bike"
-                                    />
-                                    <label
-                                      onClick="changeActiveAccordian('#seventh-card')"
-                                      className="mb-0 text-dark"
-                                      htmlFor="input7">
-                                      Finance Manager
-                                    </label>
-                                    <br />
-                                  </button>
-                                </h5>
-                              </div>
-                              <div
-                                id="collapseSeven"
-                                className="collapse"
-                                aria-labelledby="headingSeventh"
-                                data-parent="#accordion">
-                                <div className="card-body">
-                                  <div className="row">
-                                    <div className="col-3 d-flex align-items-center">
-                                      <p className="d-inline-block align-middle mr-3 mb-0">
-                                        Can view
-                                      </p>
-                                      <input
-                                        className="ios-switch --light d-inline-block"
-                                        type="checkbox"
-                                        defaultChecked
-                                      />
-                                    </div>
-                                    <div className="col-3 d-flex align-items-center">
-                                      <p className="d-inline-block align-middle mr-3 mb-0">
-                                        Can Remove
-                                      </p>
-                                      <input
-                                        className="ios-switch --light d-inline-block"
-                                        type="checkbox"
-                                        defaultChecked
-                                      />
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
+                                ))}
+                              </>
+                            ) : (
+                              'No Data Found'
+                            )}
                           </div>
                         </div>
                       </div>

@@ -11,10 +11,15 @@ import 'react-phone-number-input/style.css';
 import routes from './routing/Routing';
 import {ToastContainer} from 'react-toastify';
 import Login from './components/pages/Login/Login';
+import {connect} from 'react-redux';
+import {getRolesList} from './redux/actions';
+
 class App extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
   }
+  componentDidMount() {}
+
   render() {
     return (
       <>
@@ -30,4 +35,10 @@ class App extends React.Component {
   }
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    token: state.auth.token,
+  };
+};
+
+export default connect(mapStateToProps, {getRolesList})(App);
