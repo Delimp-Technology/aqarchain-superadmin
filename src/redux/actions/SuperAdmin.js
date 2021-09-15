@@ -1,5 +1,5 @@
 import {authAxios} from '../../config/axios';
-
+import {SAVE_ROLES} from './types';
 export const getRequestsList = () => async dispatch => {
   return new Promise(async (resolve, reject) => {
     await authAxios()
@@ -72,13 +72,14 @@ export const getLogsList = () => async dispatch => {
   });
 };
 
-export const getRolesList = () => async dispathc => {
+export const getRolesList = () => async dispatch => {
   return new Promise(async (resolve, reject) => {
     await authAxios()
       .get('/admin/role')
       .then(
         response => {
           resolve(response.data);
+          dispatch({type: SAVE_ROLES, payload: response.data.data});
         },
         error => {
           reject(error.response.data);
