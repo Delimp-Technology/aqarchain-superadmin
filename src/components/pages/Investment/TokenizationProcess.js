@@ -1,7 +1,137 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {SearchForm} from '../../common/Search';
 import {Link} from 'react-router-dom';
+import AddInvestmentProperty from './AddInvestmentProperty';
+import { useDispatch } from 'react-redux';
+import { initiaPropertySubmit, uploadImage } from '../../../redux/actions/SuperAdmin';
+import { ToastContainer, toast } from 'react-toastify';
+
 const TokenizationProcess = () => {
+  const [PropertyData, setPropertyData] = useState({
+		TokenizationStatus: false,
+		propertyTitle: '',
+		ownershipDocuments: [],
+		owners: [],
+		valuation: 0,
+		valuationCertificate: ''
+	});
+	const [OwnerData, setOwnerData] = useState({
+		name: '',
+		ownership: 0
+	});
+	const [uploads, setUploads] = useState({
+		ownershipDocuments : [],
+		valuationCertificate: {}
+	});
+	const [initiated, setInitiated] = useState(false);
+	const [NewProperty, setNewProperty] = useState({});
+
+	// let history = useHistory();
+	const dispatch = useDispatch();
+	const addOwner = () => {
+		if (OwnerData.name && OwnerData.ownership) {
+			toast.success(`Owner ${OwnerData.name} added`);
+			setPropertyData({ ...PropertyData, owners: [...PropertyData.owners, OwnerData] });
+		} else if (OwnerData.name) toast.error('Ownership % not filled');
+		else toast.error('Empty owner name');
+		setOwnerData({ name: null, ownership: null });
+	};
+	const handleImageUploads = (e) => {
+		const formData = new FormData();
+		setUploads({...uploads, ownershipDocuments: [...uploads.ownershipDocuments, e.target.files[0]]});
+		formData.append(
+			'image',
+			e.target.files[0],
+			e.target.files[0].name
+		);
+		dispatch(uploadImage(formData)).then((response)=>{
+			toast.success(response.message);
+			setPropertyData({...PropertyData, ownershipDocuments: [...PropertyData.ownershipDocuments, response.data]});
+		},(error)=>{
+			if (Array.isArray(error.message) && error.message.length) {
+				error.message.map(message =>toast.error(message));
+			}else if (Array.isArray(error.data) && error.data.length) {
+				error.data.map(message =>toast.error(message));
+			}else toast.error(error.message);
+		});
+	};
+
+	const valuationCertificateUploader = (e) =>{
+		const formData = new FormData();
+		setUploads({...uploads, valuationCertificate: e.target.files[0]});
+		formData.append(
+			'image',
+			e.target.files[0],
+			e.target.files[0].name
+		);
+		dispatch(uploadImage(formData)).then((response)=>{
+			setPropertyData({...PropertyData, valuationCertificate: response.data});
+			toast.success(response.message);
+		},(error)=>{
+			if (Array.isArray(error.message) && error.message.length) {
+				error.message.map(message =>toast.error(message));
+			}else if (Array.isArray(error.data) && error.data.length) {
+				error.data.map(message =>toast.error(message));
+			}else toast.error(error.message);
+		});
+	};
+
+	const formHandler = () => {
+		dispatch(initiaPropertySubmit(PropertyData))
+			.then(
+				response => {
+					toast.success(response.message);
+					setInitiated(true);
+					setNewProperty(response.data);
+					// history.push('/dashboard/add-tokenization-property"');
+				},
+				error => {
+					console.log(error);
+					if (Array.isArray(error.message) && error.message.length) {
+						error.message.map(message =>toast.error(message));
+					}else if (Array.isArray(error.data) && error.data.length) {
+						error.data.map(message =>toast.error(message));
+					}else toast.error(error.message);
+				}
+			);
+	};
+
+	const valuationHTML = ()=>{
+		if(uploads.valuationCertificate.name){
+			return <p className="mt-3">{uploads.valuationCertificate.name}</p>;
+		}else{
+			return <p className="mt-3">Click here to upload</p>;
+		}
+	};
+
+	const DocHTML = (val) =>{
+		
+		if(val === 1){
+			if(uploads.ownershipDocuments.length && uploads.ownershipDocuments[0]){
+				return <p className="mt-3">{uploads.ownershipDocuments[0].name}</p>;
+			}else{
+				return <p className="mt-3">Document Title 1</p>;
+			}
+		}else if(val === 2){
+			if(uploads.ownershipDocuments.length && uploads.ownershipDocuments[1]){
+				return <p className="mt-3">{uploads.ownershipDocuments[1].name}</p>;
+			}else{
+				return <p className="mt-3">Document Title 2</p>;
+			}
+		}else if(val === 3){
+			if(uploads.ownershipDocuments.length && uploads.ownershipDocuments[2]){
+				return <p className="mt-3">{uploads.ownershipDocuments[2].name}</p>;
+			}else{
+				return <p className="mt-3">Document Title 3</p>;
+			}
+		}else{
+			if(uploads.ownershipDocuments.length > 2){
+				return <p className="mt-3">+{uploads.ownershipDocuments.length} Documents</p>;
+			}else{
+				return <p className="mt-3">Add More Document</p>;
+			}
+		}
+	};
   return (
     <>
       <div id="content" className="flex-grow-1">
@@ -37,6 +167,9 @@ const TokenizationProcess = () => {
                             name="tokenize-property"
                             id="tokenize-property-true"
                             value="buy"
+                            onChange={() =>
+															setPropertyData({ ...PropertyData, TokenizationStatus: true })
+														}
                           />
                           <label
                             className="form-check-label"
@@ -51,6 +184,9 @@ const TokenizationProcess = () => {
                             name="tokenize-property"
                             id="tokenization-property-false"
                             value="rent"
+                            onChange={() =>
+															setPropertyData({ ...PropertyData, TokenizationStatus: false })
+														}
                           />
                           <label
                             className="form-check-label"
@@ -71,6 +207,9 @@ const TokenizationProcess = () => {
                             className="form-control secondary-input"
                             id="property-name-title"
                             placeholder="Enter Property Name"
+                            onChange={e =>
+															setPropertyData({ ...PropertyData, propertyTitle: e.target.value })
+														}
                           />
                         </div>
                       </div>
@@ -86,6 +225,9 @@ const TokenizationProcess = () => {
                             className="form-control secondary-input"
                             id="property-owner-name"
                             placeholder="Enter Property Owner Name"
+                            onChange={e =>
+															setOwnerData({ ...OwnerData, name: e.target.value })
+														}
                           />
                         </div>
                       </div>
@@ -96,13 +238,15 @@ const TokenizationProcess = () => {
                             type="number"
                             className="form-control secondary-input"
                             id="ownership"
+                            onChange={e => setOwnerData({ ...OwnerData, ownership: parseInt(e.target.value) })
+														}
                           />
                         </div>
                       </div>
                     </div>
                     <div className="row my-5">
                       <div className="col-lg-4 col-md-6 col-12">
-                        <button className="btn btn-gradient-secondary w-100">
+                        <button className="btn btn-gradient-secondary w-100" onClick={addOwner}>
                           Add Owners
                         </button>
                       </div>
@@ -126,8 +270,10 @@ const TokenizationProcess = () => {
                               className="custom-file-input d-none"
                               accept="image/*"
                               id="document-1"
+                              multiple={false}
+															onChange={handleImageUploads}
                             />
-                            <p className="mt-3">Document Title 1</p>
+                            {DocHTML(1)}
                           </div>
                         </label>
                       </div>
@@ -145,9 +291,11 @@ const TokenizationProcess = () => {
                               type="file"
                               className="custom-file-input d-none"
                               accept="image/*"
-                              id="document-2"
+                              multiple={false}
+															id="document-2"
+															onChange={handleImageUploads}
                             />
-                            <p className="mt-3">Document Title 2</p>
+                            {DocHTML(2)}
                           </div>
                         </label>
                       </div>
@@ -165,9 +313,11 @@ const TokenizationProcess = () => {
                               type="file"
                               className="custom-file-input d-none"
                               accept="image/*"
-                              id="document-3"
+                              multiple={false}
+															id="document-3"
+															onChange={handleImageUploads}
                             />
-                            <p className="mt-3">Document Title 3</p>
+                            {DocHTML(3)}
                           </div>
                         </label>
                       </div>
@@ -186,8 +336,9 @@ const TokenizationProcess = () => {
                               className="custom-file-input d-none"
                               accept="image/*"
                               id="add-more-document"
+                              multiple={true}
                             />
-                            <p className="mt-3">Add More Document</p>
+                            {DocHTML()}
                           </div>
                         </label>
                       </div>
@@ -201,6 +352,9 @@ const TokenizationProcess = () => {
                             className="form-control secondary-input mr-lg-2"
                             id="property-valuation"
                             placeholder="Property Valuation"
+                            onChange={e =>
+															setPropertyData({ ...PropertyData, valuation: parseInt(e.target.value) })
+														}
                           />
                           <select
                             className="form-control secondary-select"
@@ -234,8 +388,10 @@ const TokenizationProcess = () => {
                               className="custom-file-input d-none"
                               accept="image/*"
                               id="property-valuation-certificate"
+                              multiple={false}
+															onChange={valuationCertificateUploader}
                             />
-                            <p className="mt-3">Click here to upload</p>
+                            {valuationHTML()}
                           </div>
                         </label>
                       </div>
@@ -246,13 +402,15 @@ const TokenizationProcess = () => {
                           <button
                             className="btn btn-gradient-secondary w-100"
                             data-toggle="modal"
-                            data-target="#myModal">
+                            data-target="#myModal"
+                            onClick={formHandler}>
                             Submit For Verification
                           </button>
                         </Link>
                       </div>
                     </div>
                   </div>
+                  <ToastContainer />
                 </div>
               </div>
             </div>

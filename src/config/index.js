@@ -1,3 +1,3 @@
 export const defaultOptions = {
-  baseUrl: 'https://staging-api.aqarchain.com/api',
+  baseUrl: 'http://localhost:3000',
 };
