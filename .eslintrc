@@ -1,3 +1,31 @@
- {
-  "extends": "react-app"
+{
+  "env": {
+      "commonjs": true,
+      "es6": true,
+      "node": true,
+      "mocha": true
+  },
+  "extends": "eslint:recommended",
+  "sourceType": "module",
+  "globals": {
+      "Atomics": "readonly",
+      "SharedArrayBuffer": "readonly"
+  },
+  "parserOptions": {
+      "ecmaVersion": 2020
+  },
+  "rules": {
+      "indent": [
+          "error",
+          "tab"
+      ],
+      "quotes": [
+          "error",
+          "single"
+      ],
+      "semi": [
+          "error",
+          "always"
+      ]
+  }
 }

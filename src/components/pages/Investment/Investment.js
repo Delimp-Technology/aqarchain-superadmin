@@ -24,7 +24,7 @@ const Investment = () => {
                         <h3 className="mb-3 mb-lg-4">Start Tokenization</h3>
                       </div> */}
                       <div className="col-lg-4 col-12 my-lg-0 my-2">
-                        <Link to="/dashboard/tokenization-process">
+                        <Link to="/addProperty">
                           <button className="btn btn-gradient-secondary w-100 has-border-radius">
                             Add new Property{' '}
                           </button>

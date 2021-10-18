@@ -1,7 +1,109 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {SearchForm} from '../../common/Search';
+import { useDispatch} from 'react-redux';
+import { useLocation } from 'react-router-dom';
+import { getPropertyTypeList, submitProperty } from '../../../redux/actions/SuperAdmin';
+import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
+import {ToastContainer, toast} from 'react-toastify';
+
+const center = {
+		lat: 25.22960510781439,
+		lng: 55.31871779754595
+	} ,containerStyle = {
+		width: '100%',
+		height: '480px',
+		padding: '7px'
+	};
 
 const AddInvestmentProperty = () => {
+  let location = useLocation();
+	const [propertyData, setPropertyData] = useState({
+		propertyType: '',
+		propertyValue: 0,
+		propertySize: {
+			total: '',
+			available: 0
+		},
+		tokenName: '',
+		'tokenAbbreviation': '',
+		'totalTokenSupply': 0,
+		'tokenPrice': 0,
+		'decimalPlaces': 0,
+		'fundingAimingToRaise': 0,
+		'minfundToAccept': 0,
+		'maxForFundRaise': 0,
+		'numberOfTokenForFundRaise': 0,
+		'perForFundRaise': 0,
+		'walletTokens': 0,
+		'MinDurForTokenSale': new Date(),
+		'MaxDurForTokenSale': new Date(),
+		'ExtentionDurationForTokenSale': new Date(),
+		'longitude': null,
+		'latitude': null
+	});
+	const [propertySize, setPropertySize] = useState({size1: '', size2: ''});
+
+	//Maps
+	const [currentPosition, setCurrentPosition] = useState({lat: 25.22960510781439,	lng: 55.31871779754595});
+	const onMarkerDragEnd = (e) => {
+		const lat = e.latLng.lat();
+		const lng = e.latLng.lng();
+		setCurrentPosition({ lat, lng});
+		setPropertyData({...propertyData, latitude: lat,longitude: lng});
+	};
+
+	const { isLoaded } = useJsApiLoader({
+		id: 'google-map-script',
+		googleMapsApiKey: 'AIzaSyA3lp_UtCAE2SFYcsW5QyqAcEiEdbvDEv8'
+	});
+	// eslint-disable-next-line no-unused-vars
+	const [map, setMap] = useState(null);
+	const onLoad = React.useCallback(function callback(map) {
+		const bounds = new window.google.maps.LatLngBounds(
+			new window.google.maps.LatLng(25.22960510781439, 55.31871779754595),//south west
+			new window.google.maps.LatLng(25.23960510781439, 55.41871779754595) //north east
+		);
+		map.fitBounds(bounds);
+		setMap(map);
+	}, []);
+	const onUnmount = React.useCallback(function callback(map) {
+		setMap(null);
+	}, []);
+
+	//Amentites handling
+	const [propTypes, setpropTypes] = useState([]);
+	const dispatch = useDispatch();
+	const setPropertyType = ({target}) =>{
+		let new_type = propertyType.filter(type => type.type_title === target.value);
+		setPropertyData({...propertyData, propertyType: new_type[0]._id});
+	};
+	const propTypesBody = propTypes.map((item, i) => {
+		return (
+			<option key={i} value={item}>
+				{item}
+			</option>
+		);
+	});
+	const [propertyType, setpropertyType] = useState([]);
+	useEffect(() => {
+		dispatch(getPropertyTypeList())
+			.then(({data})=>{
+				let propertyTypesArray = data.map(({type_title}) => type_title);
+				setpropertyType(data);
+				setpropTypes(propertyTypesArray);
+			});
+	},[dispatch, propertyData]);
+
+	//Submit property to server
+	const submitPropertyHandler = () =>{
+		propertyData.propertySize.total = `${propertySize.size1} ${propertySize.size2}`;
+		dispatch(submitProperty(propertyData, location.state.property._id || ''))
+			.then(({data})=>{
+				toast.success(data.message);
+			},err=>{
+				toast.error(err.data.message);
+			});
+	};
   return (
     <>
       <div id="content" className="flex-grow-1">
@@ -36,6 +138,8 @@ const AddInvestmentProperty = () => {
                             className="form-control secondary-input"
                             id="property-name"
                             placeholder="Enter Property Name"
+                            readOnly= {true}
+														value = {location.state.property.propertyTitle || ''}
                           />
                         </div>
                       </div>
@@ -44,11 +148,12 @@ const AddInvestmentProperty = () => {
                           <label for="property-type">Property Type</label>
                           <select className="form-control secondary-select">
                             <option>Select your Property Type</option>
-                            <option>Residential #1</option>
+                            {propTypesBody}
+                            {/* <option>Residential #1</option>
                             <option>Residential #2</option>
                             <option>Residential #3</option>
                             <option>Residential #4</option>
-                            <option>Residential #5</option>
+                            <option>Residential #5</option> */}
                           </select>
                         </div>
                       </div>
@@ -59,11 +164,24 @@ const AddInvestmentProperty = () => {
                           <span>
                             <label>Property Location</label>
                           </span>
-                          <iframe
+                          {/* <iframe
                             src="https://www.google.com/maps/d/embed?mid=1kbKceIQ_9WA5qYSCD8YrH4BGgx1pJZHZ&z=12"
                             width="100%"
                             height="480"
-                            style={{padding: '7px'}}></iframe>
+                            style={{padding: '7px'}}></iframe> */}
+                            {isLoaded ? <GoogleMap
+														mapContainerStyle={containerStyle}
+														center={center}
+														zoom={10}
+														onLoad={onLoad}
+														onUnmount={onUnmount}
+													>
+														<Marker
+															position={currentPosition}
+															onDragEnd={onMarkerDragEnd}
+															draggable={true}
+														/>
+													</GoogleMap> : <></> }
                           <div id="map"></div>
                         </div>
                       </div>
@@ -88,6 +206,9 @@ const AddInvestmentProperty = () => {
                             className="form-control secondary-input"
                             id="property-value"
                             placeholder="Enter Property Value"
+                            onChange={(e) =>
+															setPropertyData({...propertyData, propertyValue: e.target.value})
+														}
                           />
                         </div>
                       </div>
@@ -99,12 +220,18 @@ const AddInvestmentProperty = () => {
                             className="form-control secondary-input mr-lg-2"
                             id="property-size-1"
                             placeholder="127 Sq. Mtr"
+                            onChange={(e) =>
+															setPropertySize({...propertySize, size1: e.target.value})
+														}
                           />
                           <input
                             type="text"
                             className="form-control secondary-input"
                             id="property-size-2"
                             placeholder="1367 Sq. Feet"
+                            onChange={(e) =>
+															setPropertySize({...propertySize, size2: e.target.value})
+														}
                           />
                         </div>
                       </div>
@@ -120,6 +247,9 @@ const AddInvestmentProperty = () => {
                             className="form-control secondary-input"
                             id="property-size-available-for-tokenization"
                             placeholder="Enter Property Size"
+                            onChange={(e) =>
+															setPropertyData({...propertyData, propertySize:{ available: e.target.value, total: propertyData.total}})
+														}
                           />
                         </div>
                       </div>
@@ -133,6 +263,9 @@ const AddInvestmentProperty = () => {
                             className="form-control secondary-input"
                             id="token-name"
                             placeholder="Enter Token Name"
+                            onChange={(e) =>
+															setPropertyData({...propertyData, tokenName: e.target.value})
+														}
                           />
                         </div>
                       </div>
@@ -146,6 +279,9 @@ const AddInvestmentProperty = () => {
                             className="form-control secondary-input"
                             id="token-abbreviation"
                             placeholder="Enter Token Abbreviation"
+                            onChange={(e) =>
+															setPropertyData({...propertyData, tokenAbbreviation: e.target.value})
+														}
                           />
                         </div>
                       </div>
@@ -172,6 +308,9 @@ const AddInvestmentProperty = () => {
                             className="form-control secondary-input"
                             id="total-token-supply"
                             placeholder="Enter Token Supply"
+                            onChange={(e) =>
+															setPropertyData({...propertyData, totalTokenSupply: parseInt(e.target.value)})
+														}
                           />
                         </div>
                       </div>
@@ -194,6 +333,9 @@ const AddInvestmentProperty = () => {
                             className="form-control secondary-input"
                             id="token-price"
                             placeholder="Enter Token Abbreviation"
+                            onChange={(e) =>
+															setPropertyData({...propertyData, tokenPrice: parseInt(e.target.value)})
+														}
                           />
                           {/* <!-- <small className="form-text text-danger text-left">Token Price = Property Value / Total Token Supply</small> --> */}
                         </div>
@@ -217,6 +359,9 @@ const AddInvestmentProperty = () => {
                             className="form-control secondary-input"
                             id="decimal-places"
                             placeholder="Enter Decimal Places"
+                            onChange={(e) =>
+															setPropertyData({...propertyData, decimalPlaces: parseInt(e.target.value)})
+														}
                           />
                           {/* <!-- <small className="form-text text-danger text-left">Maximum number of Decimals = 16</small> --> */}
                         </div>
@@ -241,6 +386,9 @@ const AddInvestmentProperty = () => {
                           type="text"
                           className="form-control secondary-input"
                           id="funding"
+                          onChange={(e) =>
+														setPropertyData({...propertyData, fundingAimingToRaise: parseInt(e.target.value)})
+													}
                         />
                         {/* <!-- <small className="form-text text-danger text-left">This Value cannot be greater than the Property Value
                                                 </small> --> */}
@@ -268,6 +416,9 @@ const AddInvestmentProperty = () => {
                           type="text"
                           className="form-control secondary-input"
                           id="min-fund-raise"
+                          onChange={(e) =>
+														setPropertyData({...propertyData, minfundToAccept: parseInt(e.target.value)})
+													}
                         />
                         {/* <!-- <small className="form-text text-danger text-left">This Value cannot be greater than the Value you are aiming to Raise
                                                </small> --> */}
@@ -295,6 +446,9 @@ const AddInvestmentProperty = () => {
                           type="text"
                           className="form-control secondary-input"
                           id="max-fund-raise"
+                          onChange={(e) =>
+														setPropertyData({...propertyData, maxForFundRaise: parseInt(e.target.value)})
+													}
                         />
                         {/* <!-- <small className="form-text text-danger text-left">This Value cannot be greater than the Value you are aiming to Raise
                                                </small> --> */}
@@ -321,6 +475,9 @@ const AddInvestmentProperty = () => {
                           type="text"
                           className="form-control secondary-input"
                           id="token-available-fund-raise"
+                          onChange={(e) =>
+														setPropertyData({...propertyData, numberOfTokenForFundRaise: parseInt(e.target.value)})
+													}
                         />
                         {/* <!-- <small className="form-text text-danger text-left">This value = Value of Funding to raise / Token Price
                                                </small> --> */}
@@ -347,6 +504,9 @@ const AddInvestmentProperty = () => {
                           type="text"
                           className="form-control secondary-input"
                           id="no-of-tokens-fund-raise"
+                          onChange={(e) =>
+														setPropertyData({...propertyData, perForFundRaise: parseInt(e.target.value)})
+													}
                         />
                         {/* <!-- <small className="form-text text-danger text-left">Number of Tokens Available / Total Token Supply
                                                </small> --> */}
@@ -373,6 +533,9 @@ const AddInvestmentProperty = () => {
                           type="text"
                           className="form-control secondary-input"
                           id="no-of-tokens-property-owner-wallet"
+                          onChange={(e) =>
+														setPropertyData({...propertyData, walletTokens: parseInt(e.target.value)})
+													}
                         />
                         {/* <!-- <small className="form-text text-danger text-left">Total Token Supply - No. of Tokens Available for FundRaise
                                                </small> --> */}
@@ -390,6 +553,9 @@ const AddInvestmentProperty = () => {
                             type="text"
                             className="form-control secondary-input"
                             id="min-duration-token-sale"
+                            onChange={(e) =>
+															setPropertyData({...propertyData, MinDurForTokenSale: new Date()})
+														}
                           />
                         </div>
                       </div>
@@ -401,6 +567,9 @@ const AddInvestmentProperty = () => {
                           type="text"
                           className="form-control secondary-input"
                           id="max-duration-token-sale"
+                          onChange={(e) =>
+														setPropertyData({...propertyData, MaxDurForTokenSale: new Date(e.target.value)})
+													}
                         />
                       </div>
                     </div>
@@ -416,6 +585,9 @@ const AddInvestmentProperty = () => {
                           type="text"
                           className="form-control secondary-input"
                           id="extension-of-token-sale"
+                          onChange={(e) =>
+														setPropertyData({...propertyData, ExtentionDurationForTokenSale: new Date(e.target.value)})
+													}
                         />
                       </div>
                     </div>
@@ -424,7 +596,8 @@ const AddInvestmentProperty = () => {
                         <button
                           className="btn btn-gradient-secondary w-100"
                           data-toggle="modal"
-                          data-target="#submitModal">
+                          data-target="#submitModal"
+                          onClick = {submitPropertyHandler}>
                           Submit
                         </button>
                       </div>
