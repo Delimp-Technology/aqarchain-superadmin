@@ -62,7 +62,7 @@ export const initiaPropertySubmit = (data) => async dispatch => {
 			.post('/admin/tokenized-property/',data)
 			.then(
 				(response) => {
-					response.data?.status ? resolve(response.data): reject(response.data);
+					resolve(response.data);
 				},
 				error => {
 					reject(error);

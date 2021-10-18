@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {SearchForm} from '../../common/Search';
 import { useDispatch} from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import { getPropertyTypeList, submitProperty } from '../../../redux/actions/SuperAdmin';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import {ToastContainer, toast} from 'react-toastify';
@@ -15,7 +16,7 @@ const center = {
 	};
 
 const AddInvestmentProperty = () => {
-  const currentProperty = {id: 1, propertyTitle: ''};
+  let location = useLocation();
 	const [propertyData, setPropertyData] = useState({
 		propertyType: '',
 		propertyValue: 0,
@@ -96,7 +97,7 @@ const AddInvestmentProperty = () => {
 	//Submit property to server
 	const submitPropertyHandler = () =>{
 		propertyData.propertySize.total = `${propertySize.size1} ${propertySize.size2}`;
-		dispatch(submitProperty(propertyData, currentProperty._id))
+		dispatch(submitProperty(propertyData, location.state.property._id || ''))
 			.then(({data})=>{
 				toast.success(data.message);
 			},err=>{
@@ -138,7 +139,7 @@ const AddInvestmentProperty = () => {
                             id="property-name"
                             placeholder="Enter Property Name"
                             readOnly= {true}
-														value = {currentProperty.propertyTitle}
+														value = {location.state.property.propertyTitle || ''}
                           />
                         </div>
                       </div>
