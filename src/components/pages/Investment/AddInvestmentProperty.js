@@ -4,7 +4,7 @@ import { useDispatch} from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 import { getPropertyTypeList, submitProperty } from '../../../redux/actions/SuperAdmin';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
-import {ToastContainer, toast} from 'react-toastify';
+import { toast} from 'react-toastify';
 
 const center = {
 		lat: 25.22960510781439,
