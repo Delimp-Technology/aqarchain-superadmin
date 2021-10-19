@@ -1,3 +1,3 @@
 export const defaultOptions = {
-  baseUrl: 'http://localhost:2020',
+  baseUrl: 'https://token-api.aqarchain.io',
 };

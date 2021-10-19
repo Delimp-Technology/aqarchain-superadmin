@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {SearchForm} from '../../common/Search';
 import { useDispatch} from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { getPropertyTypeList, submitProperty } from '../../../redux/actions/SuperAdmin';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import {ToastContainer, toast} from 'react-toastify';
@@ -17,11 +17,16 @@ const center = {
 
 const AddInvestmentProperty = () => {
   let location = useLocation();
+  let history = useHistory();
+  if(!location.state?.property?._id) history.replace('/addProperty');
 	const [propertyData, setPropertyData] = useState({
+    AnnualRental: 0,
+    Fee: 0,
+    Discount: 0,
 		propertyType: '',
 		propertyValue: 0,
 		propertySize: {
-			total: '',
+			total: 0,
 			available: 0
 		},
 		tokenName: '',
@@ -38,10 +43,11 @@ const AddInvestmentProperty = () => {
 		'MinDurForTokenSale': new Date(),
 		'MaxDurForTokenSale': new Date(),
 		'ExtentionDurationForTokenSale': new Date(),
-		'longitude': null,
-		'latitude': null
+		'longitude': center.lng,
+		'latitude': center.lat
 	});
-	const [propertySize, setPropertySize] = useState({size1: '', size2: ''});
+  const [propertyType, setpropertyType] = useState([]);
+	const [propertySize, setPropertySize] = useState({size1: 0, size2: 0});
 
 	//Maps
 	const [currentPosition, setCurrentPosition] = useState({lat: 25.22960510781439,	lng: 55.31871779754595});
@@ -49,7 +55,7 @@ const AddInvestmentProperty = () => {
 		const lat = e.latLng.lat();
 		const lng = e.latLng.lng();
 		setCurrentPosition({ lat, lng});
-		setPropertyData({...propertyData, latitude: lat,longitude: lng});
+		setPropertyData({...propertyData, latitude: Number(lat),longitude: Number(lng)});
 	};
 
 	const { isLoaded } = useJsApiLoader({
@@ -77,14 +83,14 @@ const AddInvestmentProperty = () => {
 		let new_type = propertyType.filter(type => type.type_title === target.value);
 		setPropertyData({...propertyData, propertyType: new_type[0]._id});
 	};
-	const propTypesBody = propTypes.map((item, i) => {
+	const propTypesBody = propertyType.map((item, i) => {
 		return (
-			<option key={i} value={item}>
-				{item}
+			<option key={item._id} value={item.type_title}>
+				{item.type_title}
 			</option>
 		);
 	});
-	const [propertyType, setpropertyType] = useState([]);
+	
 	useEffect(() => {
 		dispatch(getPropertyTypeList())
 			.then(({data})=>{
@@ -96,12 +102,22 @@ const AddInvestmentProperty = () => {
 
 	//Submit property to server
 	const submitPropertyHandler = () =>{
-		propertyData.propertySize.total = `${propertySize.size1} ${propertySize.size2}`;
-		dispatch(submitProperty(propertyData, location.state.property._id || ''))
-			.then(({data})=>{
-				toast.success(data.message);
+		propertyData.propertySize.total = propertySize.size1;
+		dispatch(submitProperty(propertyData, location.state?.property?._id || ''))
+			.then(()=>{
+				toast.success('Property Tokenized');
+        history.push('/dashboard/property-listing');
 			},err=>{
-				toast.error(err.data.message);
+        console.log(err.response);
+        if(err.response.status === 400){
+          if(Array.isArray(err.response?.data?.message)){
+            err.response.data.message.map(msg=>toast.error(msg))
+          }else toast.error(err.response.data.message)
+        }else if(err.response.status === 401){
+          toast.error("Please re-login")
+        }else{
+          toast.error(err.response.data.message);
+        }
 			});
 	};
   return (
@@ -139,14 +155,14 @@ const AddInvestmentProperty = () => {
                             id="property-name"
                             placeholder="Enter Property Name"
                             readOnly= {true}
-														value = {location.state.property.propertyTitle || ''}
+														value = {location.state?.property?.propertyTitle || ''}
                           />
                         </div>
                       </div>
                       <div className="col-lg-6 col-12">
                         <div className="form-group">
                           <label for="property-type">Property Type</label>
-                          <select className="form-control secondary-select">
+                          <select className="form-control secondary-select" onChange = {setPropertyType}>
                             <option>Select your Property Type</option>
                             {propTypesBody}
                             {/* <option>Residential #1</option>
@@ -155,6 +171,36 @@ const AddInvestmentProperty = () => {
                             <option>Residential #4</option>
                             <option>Residential #5</option> */}
                           </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="row my-4">
+                      <div className="col-lg-6 col-12">
+                        <div className="form-group">
+                          <label for="property-admin-fee">
+                            Admin Fee
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control secondary-input"
+                            id="property-admin-fee"
+                            placeholder="Enter Admin Fee"
+                            onChange = {(e)=>setPropertyData({...propertyData, Fee: Number(e.target.value)})}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-lg-6 col-12">
+                        <div className="form-group">
+                          <label for="property-user-discount">
+                            User Discount
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control secondary-input"
+                            id="property-user-discount"
+                            placeholder="Enter User discount"
+                            onChange = {(e)=>setPropertyData({...propertyData, Discount: Number(e.target.value)})}
+                          />
                         </div>
                       </div>
                     </div>
@@ -172,7 +218,7 @@ const AddInvestmentProperty = () => {
                             {isLoaded ? <GoogleMap
 														mapContainerStyle={containerStyle}
 														center={center}
-														zoom={10}
+														zoom={16}
 														onLoad={onLoad}
 														onUnmount={onUnmount}
 													>
@@ -213,24 +259,15 @@ const AddInvestmentProperty = () => {
                         </div>
                       </div>
                       <div className="col-lg-7 col-12">
-                        <label for="property-size">Property Size</label>
+                        <label for="property-size">Toal Property Size</label>
                         <div className="form-group form-inline">
                           <input
                             type="text"
-                            className="form-control secondary-input mr-lg-2"
+                            className="form-control secondary-input"
                             id="property-size-1"
                             placeholder="127 Sq. Mtr"
                             onChange={(e) =>
-															setPropertySize({...propertySize, size1: e.target.value})
-														}
-                          />
-                          <input
-                            type="text"
-                            className="form-control secondary-input"
-                            id="property-size-2"
-                            placeholder="1367 Sq. Feet"
-                            onChange={(e) =>
-															setPropertySize({...propertySize, size2: e.target.value})
+															setPropertySize({...propertySize, size1: Number(e.target.value)})
 														}
                           />
                         </div>
@@ -249,6 +286,22 @@ const AddInvestmentProperty = () => {
                             placeholder="Enter Property Size"
                             onChange={(e) =>
 															setPropertyData({...propertyData, propertySize:{ available: e.target.value, total: propertyData.total}})
+														}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-lg-6 col-12">
+                        <div className="form-group">
+                          <label for="property-annual-rental">
+                            Property Annual Rental
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control secondary-input"
+                            id="property-annual-rental"
+                            placeholder="Enter Property Annual Rental"
+                            onChange={(e) =>
+															setPropertyData({...propertyData, AnnualRental: Number(e.target.value)})
 														}
                           />
                         </div>
@@ -550,11 +603,11 @@ const AddInvestmentProperty = () => {
                             What is the Minimum Duration of the Token Sale
                           </label>
                           <input
-                            type="text"
+                            type="date"
                             className="form-control secondary-input"
                             id="min-duration-token-sale"
                             onChange={(e) =>
-															setPropertyData({...propertyData, MinDurForTokenSale: new Date()})
+															setPropertyData({...propertyData, MinDurForTokenSale: new Date(e.target.value)})
 														}
                           />
                         </div>
@@ -564,7 +617,7 @@ const AddInvestmentProperty = () => {
                           What is the Maximum Duration of the Token Sale
                         </label>
                         <input
-                          type="text"
+                          type="date"
                           className="form-control secondary-input"
                           id="max-duration-token-sale"
                           onChange={(e) =>
@@ -582,7 +635,7 @@ const AddInvestmentProperty = () => {
                       </div>
                       <div className="col-lg-6 col-12">
                         <input
-                          type="text"
+                          type="date"
                           className="form-control secondary-input"
                           id="extension-of-token-sale"
                           onChange={(e) =>

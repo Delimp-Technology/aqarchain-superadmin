@@ -1,0 +1,216 @@
+/******************************
+ *  SUPER ADMIN THEME  *
+ ******************************/
+/**********************
+ * SETTINGS OVERRIDES *
+ **********************/
+@media (max-width: 1023.98px) {
+  body.has-overlay {
+    position: relative;
+    overflow-y: hidden;
+  }
+  body.has-overlay .overlay {
+    position: absolute;
+    content: " ";
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(1, 1, 1, 0.1);
+    z-index: 1;
+  }
+}
+
+.wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  z-index: 1;
+}
+
+.wrapper #sidebar {
+  min-width: 320px;
+  max-width: 320px;
+  min-height: 100vh;
+  -webkit-box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.15);
+          box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.15);
+  -webkit-transition: 0.3s -webkit-transform;
+  transition: 0.3s -webkit-transform;
+  transition: 0.3s transform;
+  transition: 0.3s transform, 0.3s -webkit-transform;
+  background-color: #fff;
+  position: relative;
+  z-index: 2;
+}
+
+.wrapper #sidebar .navbar-brand {
+  padding-top: 30px;
+  padding-bottom: 30px;
+  background-color: #FAFAFA;
+}
+
+@media (max-width: 1023.98px) {
+  .wrapper #sidebar {
+    margin-top: -160px;
+    -webkit-transform: translateX(-320px);
+            transform: translateX(-320px);
+    -webkit-box-shadow: none;
+            box-shadow: none;
+    min-height: calc(100vh + 160px);
+  }
+  .wrapper #sidebar.active {
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
+    -webkit-box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.15);
+    background-color: #fff;
+  }
+}
+
+@media (max-width: 1023.98px) {
+  .wrapper #content {
+    width: 100%;
+    position: absolute;
+  }
+}
+
+.wrapper #content .navbar {
+  height: 190px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.wrapper #content #spacer {
+  height: 48px;
+  background-color: #FEC63D;
+}
+
+@media (min-width: 1024px) {
+  .wrapper #content #spacer {
+    height: 75px;
+  }
+}
+
+.wrapper #content .superadmin-cards .superadmin-card {
+  border-radius: 10px;
+}
+
+.wrapper #content .superadmin-cards .superadmin-card .superadmin-card-header {
+  min-height: 68px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.wrapper #content .superadmin-cards .superadmin-card-secondary {
+  background-color: #1E282E;
+  border-radius: 10px;
+}
+
+.wrapper #content .custom-card {
+  border-radius: 20px;
+}
+
+.wrapper #content #search-form #search-form-top {
+  position: relative;
+  background-color: #1E282E;
+  padding: 30px;
+  border-radius: 10px;
+}
+
+.wrapper #content #search-form #search-form-top .input-group {
+  background: transparent;
+}
+
+.wrapper #content #search-form #search-form-top .input-group input::-webkit-input-placeholder,
+.wrapper #content #search-form #search-form-top .input-group textarea::-webkit-input-placeholder {
+  color: #fff;
+  opacity: 0.5;
+}
+
+.wrapper #content #search-form #search-form-top .input-group input:-ms-input-placeholder,
+.wrapper #content #search-form #search-form-top .input-group textarea:-ms-input-placeholder {
+  color: #fff;
+  opacity: 0.5;
+}
+
+.wrapper #content #search-form #search-form-top .input-group input::-ms-input-placeholder,
+.wrapper #content #search-form #search-form-top .input-group textarea::-ms-input-placeholder {
+  color: #fff;
+  opacity: 0.5;
+}
+
+.wrapper #content #search-form #search-form-top .input-group input::placeholder,
+.wrapper #content #search-form #search-form-top .input-group textarea::placeholder {
+  color: #fff;
+  opacity: 0.5;
+}
+
+.wrapper #content #search-form #search-form-top .input-group input:not([type="submit"]):not(.btn),
+.wrapper #content #search-form #search-form-top .input-group textarea {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.wrapper #content #search-form #search-form-top .input-group input:not([type="submit"]):not(.btn):focus,
+.wrapper #content #search-form #search-form-top .input-group textarea:focus {
+  border-color: rgba(250, 228, 57, 0.5);
+}
+
+@media (min-width: 1024px) {
+  .wrapper #content #search-form #search-form-top .input-group input[type="submit"],
+  .wrapper #content #search-form #search-form-top .input-group .btn {
+    min-width: 180px;
+  }
+}
+
+.wrapper #content #search-form #search-form-top #search {
+  padding-left: 68px;
+  background-image: url("/public/images/icon-search.svg");
+  background-position: center left 16px;
+  background-repeat: no-repeat;
+  background-size: 36px;
+}
+
+.wrapper #content .pointer {
+  cursor: pointer;
+}
+
+.wrapper #content .custom-radio input[type="checkbox"] {
+  display: none;
+}
+
+.wrapper #content .custom-radio input[type="checkbox"] + label {
+  position: relative;
+  padding-left: 36px;
+  display: inline-block;
+}
+
+.wrapper #content .custom-radio input[type="checkbox"] + label::after {
+  position: absolute;
+  left: 0;
+  top: -5px;
+  display: block;
+  content: " ";
+  background-color: transparent;
+  border: 8px solid #000000;
+  border-radius: 50%;
+  height: 30px;
+  width: 30px;
+  -webkit-transition: 0.3s all;
+  transition: 0.3s all;
+}
+
+.wrapper #content .custom-radio input[type="checkbox"]:checked + label::after {
+  background-color: #fae439;
+  background-image: -webkit-gradient(linear, left top, right top, from(#FBB040), to(#FFDE17));
+  background-image: linear-gradient(to right, #FBB040 0%, #FFDE17 100%);
+}
+/*# sourceMappingURL=agent-dashboard.css.map */

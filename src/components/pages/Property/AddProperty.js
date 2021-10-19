@@ -1,8 +1,184 @@
-import React from 'react';
-import {SearchForm} from '../../common/Search';
-import {Link} from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { SearchForm } from '../../common/Search';
+import { addProperty, getPropertyTypeList, getAmenitiesList } from '../../../redux/actions/SuperAdmin';
+import { useDispatch } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
+import { useHistory } from 'react-router-dom';
+import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
+
+const center = {
+  lat: 25.22960510781439,
+  lng: 55.31871779754595
+}, containerStyle = {
+  width: '100%',
+  height: '480px',
+  padding: '7px'
+};
 
 const AddProperty = () => {
+  
+  const [PropertyData, setPropertyData] = useState({
+    title: '',
+    property_for: '',
+    property_type: '',
+    currency: 'AED',
+    price: 0,
+    country: 'United Arad Emirates',
+    state: '',
+    city: 'Dubai',
+    address1: '',
+    address2: '',
+    description: '',
+    number_of_beds: 0,
+    number_of_baths: 0,
+    propertyArea: 0,
+    areaType: 'Sq. ft',
+    company_name: '',
+    featured: false,
+    longitude: center.lng,
+    latitude: center.lat,
+    tokenizationState: true,
+    terms_acceptance: true
+  });
+
+  let history = useHistory();
+  const dispatch = useDispatch();
+
+  const [amenities, setAmenities] = useState([]);
+  const [selectedAmenities, setSelectedAmenities] = useState([]);
+
+  const [uploads, setUploads] = useState({
+    floorImages: [],
+    cover: {},
+    _360Image: {},
+    video: {},
+  });
+
+  const submitProperty = () => {
+    var data = new FormData();
+    for (const [key, value] of Object.entries(PropertyData)) {
+      data.append(key, value);
+    }
+    if (uploads.cover.name) data.append('cover', uploads.cover);
+    if (uploads._360Image.name) data.append('_360View', uploads._360Image);
+    if (uploads.video.name) data.append('video', uploads.video);
+    if (uploads.floorImages.length) {
+      for (let i = 0; i < uploads.floorImages.length; i++) {
+        data.append('floorPlans', uploads.floorImages[i]);
+      }
+    }
+    if(selectedAmenities.length){
+      for(let i=0; i<selectedAmenities.length; i++){
+        data.append('amenities', selectedAmenities[i]);
+      }
+    }
+    dispatch(addProperty(data)).then((response)=>{
+      console.log(response);
+      toast.success('Property Added Successfully');
+      console.log(" response.data response.data response.data",response.data)
+      history.push({
+        pathname: '/dashboard/tokenization-process',
+        state: { property: response.data }
+      })
+    },err=>{
+      console.log(err.response);
+      if(err.response.status === 400){
+        if(Array.isArray(err.response?.data?.message)){
+          err.response.data.message.map(msg=>toast.error(msg))
+        }else toast.error(err.response.data.message)
+      }else if(err.response.status === 401){
+        toast.error("Please re-login")
+      }else{
+        toast.error(err.response.data.message);
+      }
+    });
+  }
+
+  //Maps
+  const [currentPosition, setCurrentPosition] = useState({ lat: 25.22960510781439, lng: 55.31871779754595 });
+  const onMarkerDragEnd = (e) => {
+    const lat = e.latLng.lat();
+    const lng = e.latLng.lng();
+    setCurrentPosition({ lat, lng });
+    setPropertyData({ ...PropertyData, latitude: lat, longitude: lng });
+  };
+
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: 'AIzaSyA3lp_UtCAE2SFYcsW5QyqAcEiEdbvDEv8'
+  });
+  // eslint-disable-next-line no-unused-vars
+  const [map, setMap] = useState(null);
+  const onLoad = React.useCallback(function callback(map) {
+    const bounds = new window.google.maps.LatLngBounds(
+      new window.google.maps.LatLng(25.22960510781439, 55.31871779754595),//south west
+      new window.google.maps.LatLng(25.23960510781439, 55.41871779754595) //north east
+    );
+    map.fitBounds(bounds);
+    setMap(map);
+  }, []);
+  const onUnmount = React.useCallback(function callback(map) {
+    setMap(null);
+  }, []);
+
+  const videoHTML = () => {
+    if (uploads.video.name) {
+      return <p className="mt-3">{uploads.video.name || `Click here to upload`}</p>;
+    } else {
+      return <p className="mt-3">Upload property video</p>;
+    }
+  }
+  const _360HTML = () => {
+    if (uploads._360Image.name) {
+      return <p className="mt-3">{uploads._360Image.name || `Click here to upload`}</p>;
+    } else {
+      return <p className="mt-3">Upload 360 image</p>;
+    }
+  }
+  const coverHTML = () => {
+    if (uploads.cover.name) {
+      return <p className="mt-3">{uploads.cover.name || `Click here to upload`}</p>;
+    } else {
+      return <p className="mt-3">Click here to upload</p>;
+    }
+  };
+
+  const floorHTML = () => {
+    if (uploads.floorImages.length) {
+      return <p className="mt-3">{`${uploads.floorImages.length} items`}</p>;
+    } else {
+      return <p className="mt-3">Click here to upload</p>;
+    }
+  };
+
+  //Property types and Amenities handling
+  const [propTypes, setpropTypes] = useState([]);
+  const setPropertyType = ({ target }) => {
+    let new_type = propertyType.filter(type => type.type_title === target.value);
+    setPropertyData({ ...PropertyData, property_type: new_type[0]._id });
+  };
+  const propTypesBody = propTypes.map((item, i) => {
+    return (
+      <option key={i} value={item}>
+        {item}
+      </option>
+    );
+  });
+  const [propertyType, setpropertyType] = useState([]);
+  useEffect(() => {
+    dispatch(getPropertyTypeList())
+      .then(({ data }) => {
+        let propertyTypesArray = data.map(({ type_title }) => type_title);
+        setpropertyType(data);
+        setpropTypes(propertyTypesArray);
+      });
+    dispatch(getAmenitiesList())
+      .then(({ data }) => {
+        let amenitiesArray = data.map(({ feature }) => feature);
+        setAmenities(data);
+      });
+  }, [dispatch, PropertyData]);
+
   return (
     <>
       <div id="content" className="flex-grow-1">
@@ -32,6 +208,9 @@ const AddProperty = () => {
                               name="interested-option"
                               id="interested_in_buy"
                               value="buy"
+                              onChange={() =>
+                                setPropertyData({ ...PropertyData, property_for: 'BUY' })
+                              }
                             />
                             <label
                               className="form-check-label"
@@ -46,6 +225,7 @@ const AddProperty = () => {
                               name="interested-option"
                               id="interested_in_rent"
                               value="rent"
+                              onChange={() => setPropertyData({ ...PropertyData, property_for: 'BUY' })}
                             />
                             <label
                               className="form-check-label"
@@ -59,18 +239,6 @@ const AddProperty = () => {
                     <div className="row my-3">
                       <div className="col-lg-6 col-12">
                         <div className="form-group">
-                          <label className="ml-2" htmlFor="listedBy">
-                            Listed By
-                          </label>
-                          <select className="form-control secondary-select">
-                            <option>Agent</option>
-                            <option>Owner</option>
-                            <option>Admin</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div className="col-lg-6 col-12">
-                        <div className="form-group">
                           <label className="ml-2" htmlFor="company">
                             Your Company
                           </label>
@@ -79,6 +247,7 @@ const AddProperty = () => {
                             className="form-control secondary-input"
                             id="company"
                             placeholder="Enter Your Company"
+                            onChange={(e) => setPropertyData({ ...PropertyData, company_name: e.target.value })}
                           />
                         </div>
                       </div>
@@ -94,6 +263,7 @@ const AddProperty = () => {
                             className="form-control secondary-input"
                             id="propertyName"
                             placeholder="Enter Property Name"
+                            onChange={(e) => setPropertyData({ ...PropertyData, title: e.target.value })}
                           />
                         </div>
                       </div>
@@ -102,10 +272,11 @@ const AddProperty = () => {
                           <label className="ml-2" htmlFor="listedBy">
                             Select Property Type
                           </label>
-                          <select className="form-control secondary-select">
-                            <option>Villa</option>
+                          <select className="form-control secondary-select" onChange={setPropertyType}>
+                            {/* <option>Villa</option>
                             <option>Condo</option>
-                            <option>Studio Apt</option>
+                            <option>Studio Apt</option> */}
+                            {propTypesBody}
                           </select>
                         </div>
                       </div>
@@ -116,11 +287,12 @@ const AddProperty = () => {
                           <label className="ml-2" htmlFor="country">
                             Currency
                           </label>
-                          <select className="form-control secondary-select">
+                          <select className="form-control secondary-select" onChange={(e) => setPropertyData({ ...PropertyData, currency: e.target.value })}>
                             <option>AED</option>
                             <option>BHD</option>
                             <option>HKD</option>
                             <option>JOD</option>
+                            <option >USD</option>
                           </select>
                         </div>
                       </div>
@@ -134,6 +306,7 @@ const AddProperty = () => {
                             className="form-control secondary-input"
                             id="price"
                             placeholder="Enter Price"
+                            onChange={(e) => setPropertyData({ ...PropertyData, price: Number(e.target.value) })}
                           />
                         </div>
                       </div>
@@ -144,18 +317,28 @@ const AddProperty = () => {
                           <label className="ml-2" htmlFor="country">
                             Country
                           </label>
-                          <select className="form-control secondary-select">
+                          <select className="form-control secondary-select" onChange={(e) => setPropertyData({ ...PropertyData, country: e.target.value })}>
                             <option>United Arad Emirates</option>
                             <option>KSA</option>
                           </select>
                         </div>
+                        <label className="ml-2" htmlFor="state">
+                          State
+                        </label>
+                        <input
+                          type="text"
+                          className="form-control secondary-input"
+                          id="state"
+                          placeholder="State"
+                          onChange={(e) => setPropertyData({ ...PropertyData, state: e.target.value })}
+                        />
                       </div>
                       <div className="col-lg-6 col-12">
                         <div className="form-group">
                           <label className="ml-2" htmlFor="city">
                             City
                           </label>
-                          <select className="form-control secondary-select">
+                          <select className="form-control secondary-select" onChange={(e) => setPropertyData({ ...PropertyData, city: e.target.value })}>
                             <option>Dubai</option>
                             <option>Abu Dhabi</option>
                             <option>Sharjah</option>
@@ -174,6 +357,19 @@ const AddProperty = () => {
                               width="100%"
                               height="480"
                               style="padding: 7px;"></iframe> */}
+                            {isLoaded ? <GoogleMap
+                              mapContainerStyle={containerStyle}
+                              center={center}
+                              zoom={20}
+                              onLoad={onLoad}
+                              onUnmount={onUnmount}
+                            >
+                              <Marker
+                                position={currentPosition}
+                                onDragEnd={onMarkerDragEnd}
+                                draggable={true}
+                              />
+                            </GoogleMap> : <></>}
                             <div id="map"></div>
                           </div>
                         </div>
@@ -183,26 +379,28 @@ const AddProperty = () => {
                       <div className="col-lg-6 col-12">
                         <div className="form-group">
                           <label className="ml-2" htmlFor="address1">
-                            Address Line 1
+                            Address
                           </label>
                           <input
                             type="text"
                             className="form-control secondary-input"
                             id="address1"
-                            placeholder="Enter Address"
+                            placeholder="Address Line 1"
+                            onChange={(e) => setPropertyData({ ...PropertyData, address1: e.target.value })}
                           />
                         </div>
                       </div>
                       <div className="col-lg-6 col-12">
                         <div className="form-group">
                           <label className="ml-2" htmlFor="address2">
-                            Address Line 2
+
                           </label>
                           <input
                             type="text"
                             className="form-control secondary-input"
                             id="address2"
-                            placeholder="Enter Property Name"
+                            placeholder="Address Line 2"
+                            onChange={(e) => setPropertyData({ ...PropertyData, address2: e.target.value })}
                           />
                         </div>
                       </div>
@@ -216,7 +414,9 @@ const AddProperty = () => {
                           <textarea
                             className="form-control secondary-input"
                             rows="5"
-                            id="description"></textarea>
+                            id="description"
+                            onChange={(e) => setPropertyData({ ...PropertyData, description: e.target.value })}
+                          ></textarea>
                         </div>
                       </div>
                     </div>
@@ -231,29 +431,27 @@ const AddProperty = () => {
                           <label className="ml-2" htmlFor="beds">
                             No. of Beds
                           </label>
-                          <select className="form-control secondary-select">
-                            <option>01</option>
-                            <option>02</option>
-                            <option>03</option>
-                            <option>04</option>
-                            <option>05</option>
-                            <option>06</option>
-                          </select>
+                          <input
+                            type="number"
+                            className="form-control secondary-input"
+                            id="beds"
+                            placeholder="Enter number of beds"
+                            onChange={(e) => setPropertyData({ ...PropertyData, number_of_beds: Number(e.target.value) })}
+                          />
                         </div>
                       </div>
                       <div className="col-lg-4 col-md-6 col-12 my-lg-0 my-2">
                         <div className="form-group">
-                          <label className="ml-2" htmlFor="beds">
+                          <label className="ml-2" htmlFor="baths">
                             No. of Baths
                           </label>
-                          <select className="form-control secondary-select">
-                            <option>01</option>
-                            <option>02</option>
-                            <option>03</option>
-                            <option>04</option>
-                            <option>05</option>
-                            <option>06</option>
-                          </select>
+                          <input
+                            type="number"
+                            className="form-control secondary-input"
+                            id="baths"
+                            placeholder="Enter number of baths"
+                            onChange={(e) => setPropertyData({ ...PropertyData, number_of_baths: Number(e.target.value) })}
+                          />
                         </div>
                       </div>
                       <div className="col-lg-4 col-md-6 col-12 my-lg-0 my-2">
@@ -267,10 +465,11 @@ const AddProperty = () => {
                                 type="number"
                                 className="form-control secondary-input"
                                 id="area"
+                                onChange={(e) => setPropertyData({ ...PropertyData, propertyArea: Number(e.target.value) })}
                               />
                             </div>
                             <div className="col-lg-6 my-lg-0 my-2">
-                              <select className="form-control secondary-select">
+                              <select className="form-control secondary-select" onChange={(e) => setPropertyData({ ...PropertyData, areaType: e.target.value })}>
                                 <option>Sq. ft</option>
                                 <option>Sq. m</option>
                                 <option>acre</option>
@@ -285,489 +484,83 @@ const AddProperty = () => {
                         <label className="ml-2">Property Amenities</label>
                       </div>
                     </div>
-                    <div className="row my-4">
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="elevator"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="elevator">
-                            Elevator
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="powderRoom"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="powderRoom">
-                            Powder Room
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="mainRoom"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="mainRoom">
-                            Maid Room
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="laundryRooom"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="laundryRooom">
-                            Laundry Room
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row my-4">
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="driverRoom"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="driverRoom">
-                            Driver Room
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="openParking"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="openParking">
-                            Open Parking
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="coveredParking"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="coveredParking">
-                            Covered Parking
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="freeParking"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="freeParking">
-                            Free Parking
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row my-4">
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="terrace"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="terrace">
-                            Terrace
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="balcony"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="balcony">
-                            Balcony
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="courtyard-1"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="courtyard-1">
-                            Courtyard
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="garden"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="garden">
-                            Garden
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row my-4">
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="playingArea"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="playingArea">
-                            Children Play Area
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="swimmingPool"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="swimmingPool">
-                            Swimming Pool
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="gym"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="gym">
-                            Gym
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="courtyard-2"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="courtyard-2">
-                            Courtyard
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row my-4">
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="splitAC"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="splitAC">
-                            Split AC
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="sports"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="sports">
-                            Sports & Recreation
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="centralAC"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="centralAC">
-                            Central AC
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="wifi"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="wifi">
-                            WiFi
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row my-4">
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="furnished"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="furnished">
-                            Furnished
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="windowAC"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="windowAC">
-                            Window AC
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="kitchenCabinetry"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="kitchenCabinetry">
-                            Kitchen Cabinetry
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="kitchenAppliances"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="kitchenAppliances">
-                            Kitchen Appliances
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row my-4">
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="walkInCloset"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="walkInCloset">
-                            Walk in closet
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="barbequeArea"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="barbequeArea">
-                            Barbeque Area
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3">
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="builtInWardrobes"
-                          />
-                          <label
-                            className="form-check-label font-weight-bold text-dark"
-                            htmlFor="builtInWardrobes">
-                            Build in Wardrobes
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* <div className="row my-3">
-                      <div className="col-12">
-                        <label className="my-4">
-                          Add Property Photos ( Main Cover Photo )
-                        </label>
-                        <label
-                          className="dashed-border p-4"
-                          htmlFor="cover-photo">
-                          <div className="image-upload">
-                            <img
-                              className="mx-auto cursor"
-                              src="public/images/Upload.svg"
-                              style="width:30px;"
-                              alt=""
-                            />
-                            <input
-                              type="file"
-                              className="custom-file-input d-none"
-                              accept="image/*"
-                              id="cover-photo"
-                            />
-                            <p className="mt-3">Drag or Upload here</p>
+                    {<div className="row my-4">
+                      {amenities.map(item => {
+                        return (
+                          <div className="col-lg-3 col-md-6 col-12 mb-lg-0 my-3" key={item._id}>
+                            <div className="form-check">
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                value={item.feature}
+                                id={item._id}
+                                onChange={(e)=>setSelectedAmenities([...selectedAmenities, e.target.id])}
+                              />
+                              <label
+                                className="form-check-label font-weight-bold text-dark"
+                                htmlFor={item._id} id={item._id}>
+                                {item.feature}
+                              </label>
+                            </div>
                           </div>
-                        </label>
-                      </div>
-                    </div> */}
-                    {/* <div className="row row my-3">
-                      <div className="col-12">
-                        <label className="my-4">
-                          Add More Photos ( Adding More Photos can boost the
-                          lead )
-                        </label>
-                        <label
-                          className="dashed-border p-4"
-                          htmlFor="more-photos">
-                          <div className="image-upload">
-                            <img
-                              className="mx-auto cursor"
-                              src="public/images/Upload.svg"
-                              style="width:30px;"
-                            />
-                            <input
-                              type="file"
-                              className="custom-file-input d-none"
-                              accept="image/*"
-                              id="more-photos"
-                            />
-                            <p className="mt-3">Drag or Upload here</p>
-                          </div>
-                        </label>
-                      </div>
+                        );
+                      })}
+                    </div>}
+                    <div className="col-lg-12 col-md-12 col-12">
+                      <span>
+                        <p>Add Property Photos ( Main Cover Photo )</p>
+                      </span>
+                      <label
+                        className="dashed-border p-4"
+                        htmlFor="cover-photo">
+                        <div className="image-upload">
+                          <img
+                            className="mx-auto cursor"
+                            src="public/images/Upload.svg"
+                            style={{ width: '30px' }}
+                          />
+                          <input
+                            type="file"
+                            className="custom-file-input d-none"
+                            accept="image/*"
+                            id="cover-photo"
+                            multiple={false}
+                            onChange={(e) => setUploads({ ...uploads, cover: e.target.files[0] })}
+                          />
+                          {coverHTML()}
+                        </div>
+                      </label>
                     </div>
-                    <div className="row my-3">
-                      <div className="col-lg-6 col-12">
-                        <label htmlFor="video-link" className="ml-2 mb-3">
-                          Video Link
-                        </label>
-                        <input
-                          className="form-control secondary-input"
-                          id="video-link"
-                        />
-                      </div>
-                      <div className="col-lg-6 col-12 my-lg-0 my-2">
+                    <div className="col-lg-12 col-md-12 col-12">
+                      <span>
+                        <p>Add More Photos ( Adding More Photos can boost the lead )</p>
+                      </span>
+                      <label
+                        className="dashed-border p-4"
+                        htmlFor="floor-images">
+                        <div className="image-upload">
+                          <img
+                            className="mx-auto cursor"
+                            src="public/images/Upload.svg"
+                            style={{ width: '30px' }}
+                          />
+                          <input
+                            type="file"
+                            className="custom-file-input d-none"
+                            accept="image/*"
+                            id="floor-images"
+                            multiple={true}
+                            onChange={(e) => setUploads({ ...uploads, floorImages: e.target.files })}
+                          />
+                          {floorHTML()}
+                        </div>
+                      </label>
+                    </div>
+                    <span>
+                      <p>Upload Property video and 360 image</p>
+                    </span>
+                    <div className="row my-5">
+                      <div className="col-lg-3 col-md-6 col-12 my-lg-0 my-2">
                         <label
                           className="dashed-border p-4"
                           htmlFor="360-video">
@@ -775,19 +568,43 @@ const AddProperty = () => {
                             <img
                               className="mx-auto cursor"
                               src="public/images/Upload.svg"
-                              style="width:30px;"
+                              style={{ width: '30px' }}
                             />
                             <input
                               type="file"
                               className="custom-file-input d-none"
                               accept="image/*"
                               id="360-video"
+                              multiple={false}
+                              onChange={(e) => setUploads({ ...uploads, _360Image: e.target.files[0] })}
                             />
-                            <p className="mt-3">360 Video Upload</p>
+                            {_360HTML()}
                           </div>
                         </label>
                       </div>
-                    </div> */}
+                      <div className="col-lg-3 col-md-6 col-12 my-lg-0 my-2">
+                        <label
+                          className="dashed-border p-4"
+                          htmlFor="property-video">
+                          <div className="image-upload">
+                            <img
+                              className="mx-auto cursor"
+                              src="public/images/Upload.svg"
+                              style={{ width: '30px' }}
+                            />
+                            <input
+                              type="file"
+                              className="custom-file-input d-none"
+                              accept="image/*"
+                              multiple={false}
+                              id="property-video"
+                              onChange={(e) => setUploads({ ...uploads, video: e.target.files[0] })}
+                            />
+                            {videoHTML()}
+                          </div>
+                        </label>
+                      </div>
+                    </div>
                     <div className="row">
                       <div className="col-lg-7 col-12 my-2">
                         <div className="form-check">
@@ -809,7 +626,9 @@ const AddProperty = () => {
                       <div className="col-lg-4 col-md-6 col-12">
                         <button
                           id="signup-button"
-                          className="btn btn-gradient-secondary w-100 my-5">
+                          className="btn btn-gradient-secondary w-100 my-5"
+                          onClick={submitProperty}
+                        >
                           Add Property
                         </button>
                       </div>
@@ -820,6 +639,7 @@ const AddProperty = () => {
             </div>
           </div>
         </div>
+        <ToastContainer />
       </div>
     </>
   );

@@ -1,6 +1,42 @@
 import {authAxios} from '../../config/axios';
 import {SAVE_ROLES} from './types';
 
+export const getAmenitiesList = () => async dispatch => {
+	return new Promise((resolve, reject) => {
+		authAxios()
+			.get('/config/propertyFeatureList/')
+			.then(
+				(response) => {
+					resolve(response.data);
+				},
+				error => {
+					reject(error);
+				},
+			)
+			.catch(error => {
+				reject(error);
+			});
+	});
+};
+
+export const addProperty = (data) => async dispatch => {
+	return new Promise((resolve, reject) => {
+		authAxios()
+			.post('/admin/property/',data)
+			.then(
+				(response) => {
+					resolve(response.data);
+				},
+				error => {
+					reject(error);
+				},
+			)
+			.catch(error => {
+				reject(error);
+			});
+	});
+};
+
 export const uploadImage = (data) => dispatch => {
 	return new Promise((resolve, reject) => {
 		authAxios()
@@ -29,7 +65,7 @@ export const submitProperty = (data, id) => dispatch => {
 					resolve(response.data);
 				},
 				error => {
-					reject(error.response?.data);
+					reject(error);
 				},
 			)
 			.catch(error => {

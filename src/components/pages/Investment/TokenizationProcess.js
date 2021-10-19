@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
 import { SearchForm } from '../../common/Search';
 import { Link } from 'react-router-dom';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import AddInvestmentProperty from './AddInvestmentProperty';
 import { useDispatch } from 'react-redux';
 import { initiaPropertySubmit, uploadImage } from '../../../redux/actions/SuperAdmin';
 import { ToastContainer, toast } from 'react-toastify';
 
 const TokenizationProcess = () => {
+  let location = useLocation();
+  let history = useHistory();
+  if(!location.state?.property?._id) history.replace('/addProperty');
   const [PropertyData, setPropertyData] = useState({
     TokenizationStatus: false,
-    propertyTitle: '',
+    propertyTitle: location.state?.property?.title || '',
     ownershipDocuments: [],
     owners: [],
     valuation: 0,
     valuationCertificate: '',
-    id: '616c2f5b5ec002b89effb285',
+    id: location.state?.property?._id || '',
     ROI: null
   });
   const [OwnerData, setOwnerData] = useState({
@@ -26,9 +29,7 @@ const TokenizationProcess = () => {
     ownershipDocuments: [],
     valuationCertificate: {}
   });
-  const [NewProperty, setNewProperty] = useState({});
 
-  let history = useHistory();
   const dispatch = useDispatch();
   const addOwner = () => {
     if (OwnerData.name && OwnerData.ownership) {
@@ -83,7 +84,7 @@ const TokenizationProcess = () => {
       .then(
         response => {
           console.log("repsomkbjnnvcbkbvbnbvkxbkjcxvnj",response);
-          toast.success(response.message);
+          toast.success('Tokenization initiated');
           history.push({
             pathname: '/dashboard/add-tokenization-property',
             state: { property: response.data }
@@ -211,7 +212,8 @@ const TokenizationProcess = () => {
                             type="text"
                             className="form-control secondary-input"
                             id="property-name-title"
-                            placeholder="Enter Property Name"
+                            readOnly = {true}
+                            placeholder={location.state?.property?.title || ''}
                             onChange={e =>
                               setPropertyData({ ...PropertyData, propertyTitle: e.target.value })
                             }

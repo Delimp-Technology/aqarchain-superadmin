@@ -7,7 +7,7 @@ const PrivateRoute = ({token, component: Component, ...rest}) => {
     <Route
       {...rest}
       component={props =>
-        true ? (
+        token ? (
           <Component {...props} />
         ) : (
           <Redirect
