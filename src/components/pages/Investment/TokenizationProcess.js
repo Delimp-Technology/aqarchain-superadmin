@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { SearchForm } from '../../common/Search';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { useHistory, useLocation } from 'react-router-dom';
-import AddInvestmentProperty from './AddInvestmentProperty';
+// import AddInvestmentProperty from './AddInvestmentProperty';
 import { useDispatch } from 'react-redux';
 import { initiaPropertySubmit, uploadImage } from '../../../redux/actions/SuperAdmin';
 import { ToastContainer, toast } from 'react-toastify';
@@ -83,7 +83,6 @@ const TokenizationProcess = () => {
     dispatch(initiaPropertySubmit(PropertyData))
       .then(
         response => {
-          console.log("repsomkbjnnvcbkbvbnbvkxbkjcxvnj",response);
           toast.success('Tokenization initiated');
           history.push({
             pathname: '/dashboard/add-tokenization-property',

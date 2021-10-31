@@ -73,15 +73,12 @@ const AddProperty = () => {
       }
     }
     dispatch(addProperty(data)).then((response)=>{
-      console.log(response);
       toast.success('Property Added Successfully');
-      console.log(" response.data response.data response.data",response.data)
       history.push({
         pathname: '/dashboard/tokenization-process',
         state: { property: response.data }
       })
     },err=>{
-      console.log(err.response);
       if(err.response.status === 400){
         if(Array.isArray(err.response?.data?.message)){
           err.response.data.message.map(msg=>toast.error(msg))
@@ -107,18 +104,13 @@ const AddProperty = () => {
     id: 'google-map-script',
     googleMapsApiKey: 'AIzaSyA3lp_UtCAE2SFYcsW5QyqAcEiEdbvDEv8'
   });
-  // eslint-disable-next-line no-unused-vars
-  const [map, setMap] = useState(null);
+
   const onLoad = React.useCallback(function callback(map) {
     const bounds = new window.google.maps.LatLngBounds(
       new window.google.maps.LatLng(25.22960510781439, 55.31871779754595),//south west
       new window.google.maps.LatLng(25.23960510781439, 55.41871779754595) //north east
     );
     map.fitBounds(bounds);
-    setMap(map);
-  }, []);
-  const onUnmount = React.useCallback(function callback(map) {
-    setMap(null);
   }, []);
 
   const videoHTML = () => {
@@ -155,6 +147,7 @@ const AddProperty = () => {
   const [propTypes, setpropTypes] = useState([]);
   const setPropertyType = ({ target }) => {
     let new_type = propertyType.filter(type => type.type_title === target.value);
+    console.log(new_type)
     setPropertyData({ ...PropertyData, property_type: new_type[0]._id });
   };
   const propTypesBody = propTypes.map((item, i) => {
@@ -362,7 +355,6 @@ const AddProperty = () => {
                               center={center}
                               zoom={20}
                               onLoad={onLoad}
-                              onUnmount={onUnmount}
                             >
                               <Marker
                                 position={currentPosition}
@@ -494,7 +486,7 @@ const AddProperty = () => {
                                 type="checkbox"
                                 value={item.feature}
                                 id={item._id}
-                                onChange={(e)=>setSelectedAmenities([...selectedAmenities, e.target.id])}
+                                onChange={(e)=>{console.log([...selectedAmenities, e.target.id]);setSelectedAmenities([...selectedAmenities, e.target.id]);}}
                               />
                               <label
                                 className="form-check-label font-weight-bold text-dark"

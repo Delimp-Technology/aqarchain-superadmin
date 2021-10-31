@@ -108,7 +108,6 @@ const AddInvestmentProperty = () => {
 				toast.success('Property Tokenized');
         history.push('/dashboard/property-listing');
 			},err=>{
-        console.log(err.response);
         if(err.response.status === 400){
           if(Array.isArray(err.response?.data?.message)){
             err.response.data.message.map(msg=>toast.error(msg))
